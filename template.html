@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Presentation</title>
+  <style>
+    @font-face {
+        font-family: 'BMEULJIRO';
+        src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/BMEULJIRO.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'ChosunGs';
+        src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/ChosunGs.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+    }
+    body {
+      font-family: 'ChosunGs', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 50px;
+      background-color: #f0f0f0;
+      color: #333;
+    }
+
+    /* Export mode: 버튼들 숨기기 */
+    .export-mode #toc-toggle,
+    .export-mode #laser-toggle,
+    .export-mode #editor-toggle,
+    .export-mode #home-button,
+    .export-mode #export-button,
+    .export-mode #editor-wrapper {
+      display: none !important;
+    }
+
+    .content-wrapper {
+        max-width: 800px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    #toc-toggle {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1001;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: left 0.4s ease;
+    }
+    #toc-nav {
+      position: fixed;
+      top: 0;
+      left: -320px;
+      width: 280px;
+      height: 100%;
+      background: #f8f8f8;
+      border-right: 1px solid #e7e7e7;
+      padding: 80px 20px 20px 20px;
+      overflow-y: auto;
+      z-index: 1000;
+      transition: left 0.4s ease;
+    }
+    body.toc-open #toc-nav {
+      left: 0;
+    }
+    body.toc-open #toc-toggle {
+      left: 300px;
+    }
+    #laser-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1001;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+    }
+    #laser-toggle.active {
+      background-color: #fff0f0;
+      border-color: #ff8080;
+    }
+    #editor-toggle {
+      position: fixed;
+      top: 20px;
+      right: 70px;
+      z-index: 1001;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+    }
+    #editor-toggle.active {
+      background-color: #e6f7ff;
+      border-color: #91d5ff;
+    }
+    #home-button {
+      position: fixed;
+      top: 20px;
+      left: 70px;
+      z-index: 1001;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+      text-decoration: none;
+      transition: opacity 0.3s ease;
+    }
+    body.toc-open #home-button {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #export-pdf-button {
+      position: fixed;
+      top: 20px;
+      right: 120px;
+      z-index: 1001;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+    }
+    #export-pdf-button.loading {
+      cursor: wait;
+      background-color: #f0f0f0;
+    }
+    #export-pdf-button.loading svg {
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    #editor-wrapper {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 40vw;
+      height: 100vh;
+      background: #fdfdfd;
+      z-index: 1002;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      transform: translateX(-100%);
+      transition: transform 0.4s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    body.editor-mode #editor-wrapper {
+      transform: translateX(0);
+    }
+    body.editor-mode #preview-container {
+      margin-left: 40vw;
+    }
+    #editor-header {
+      padding: 10px 15px;
+      background: #f0f0f0;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: sans-serif;
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+    }
+    #save-button {
+      padding: 5px 12px;
+      font-size: 13px;
+      font-weight: bold;
+      color: #fff;
+      background-color: #28a745;
+      border: 1px solid #28a745;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    #save-button:hover {
+      background-color: #218838;
+    }
+    #editor {
+      flex-grow: 1;
+      border: none;
+      padding: 15px;
+      font-family: monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      resize: none;
+      background-color: #fdfdfd;
+    }
+    #editor:focus {
+      outline: none;
+    }
+
+    #toc-nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    #toc-nav a {
+      text-decoration: none;
+      color: #333;
+      display: block;
+      padding: 5px 0;
+      transition: color 0.2s;
+    }
+    #toc-nav a:hover {
+      color: #007acc;
+    }
+    .toc-level-1 { font-weight: bold; margin-top: 10px; }
+    .toc-level-2 { padding-left: 15px; }
+    .toc-level-3 { padding-left: 30px; }
+
+    .control-button {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+    }
+    .control-button.loading {
+      cursor: wait;
+      background-color: #f0f0f0;
+    }
+    .control-button.loading svg {
+      animation: spin 1s linear infinite;
+    }
+
+    #laser-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 9999;
+      pointer-events: none; /* Allows clicks to pass through */
+      width: 100vw;
+      height: 100vh;
+    }
+
+    body.laser-mode-on {
+      user-select: none;
+      -webkit-user-select: none;
+      /* cursor: crosshair; */
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'BMEULJIRO';
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    h1.visible, h2.visible, h3.visible, h4.visible, h5.visible, h6.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    p {
+      /* The script will wrap words in spans, so we animate the spans */
+    }
+    p .word {
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+    }
+    strong {
+        position: relative;
+        font-weight: bold;
+        z-index: 1;
+    }
+    strong::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 1px;
+      width: 100%;
+      height: 0.4em;
+      background-color: rgba(255, 229, 100, 0.7);
+      z-index: -1;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease-out;
+    }
+    strong.visible::after {
+      transform: scaleX(1);
+    }
+    em {
+        font-style: italic;
+    }
+    
+    @keyframes flash-highlight {
+      from {
+        background-color: rgba(255, 255, 0, 0.4);
+      }
+      to {
+        background-color: transparent;
+      }
+    }
+
+    .flash-highlight {
+      animation: flash-highlight 1s ease-out;
+    }
+
+    #export-button {
+      position: fixed;
+      top: 20px;
+      right: 120px;
+      z-index: 1001;
+    }
+
+    .control-group {
+      position: relative;
+    }
+
+    #export-options {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      z-index: 1002;
+      width: 150px;
+    }
+
+    #export-options a {
+      display: block;
+      padding: 8px 12px;
+      color: #333;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    #export-options a:hover {
+      background-color: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+  <div id="editor-wrapper">
+    <div id="editor-header">
+      <span>Markdown Editor</span>
+      <button id="save-button">Save</button>
+    </div>
+    <textarea id="editor"></textarea>
+  </div>
+
+  <div id="preview-container">
+    <a id="home-button" href="/" title="Back to Home">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+    </a>
+    <button id="toc-toggle">☰</button>
+    <button id="laser-toggle" title="Toggle Laser Pointer (L)">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+    </button>
+    <div id="export-button" class="control-group">
+      <button id="export-trigger" class="control-button" title="Export options">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+      </button>
+      <div id="export-options">
+        <a href="#" id="export-html-btn">Export as HTML</a>
+        <a href="#" id="export-pdf-btn">Export as PDF</a>
+      </div>
+    </div>
+    <button id="editor-toggle" title="Toggle Editor">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+    </button>
+    
+    <nav id="toc-nav">
+      {{TOC_HTML}}
+    </nav>
+    <div class="content-wrapper">
+      {{CONTENT}}
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Export 모드 감지 (간단하게)
+      const isExported = document.body.classList.contains('export-mode') || 
+                        !window.location.pathname.includes('/view');
+
+      // Export 모드라면 export-mode 클래스 추가 (CSS로 버튼들 숨김)
+      if (isExported) {
+        document.body.classList.add('export-mode');
+      }
+
+      // 애니메이션 초기화 (항상 실행)
+      initAnimations();
+
+      // Export 모드가 아닐 때만 웹 기능들 활성화
+      if (!isExported) {
+        initWebFeatures();
+      }
+
+      // 레이저 포인터는 항상 활성화
+      initLaserPointer();
+    });
+
+    function initAnimations() {
+      const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+      };
+
+      // 제목 애니메이션
+      const headingObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(heading => {
+        headingObserver.observe(heading);
+      });
+
+      // 텍스트 애니메이션
+      const textObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const paragraph = entry.target;
+            const words = paragraph.querySelectorAll('.word');
+            
+            words.forEach((word, index) => {
+              setTimeout(() => {
+                word.style.opacity = '1';
+              }, index * 100);
+            });
+
+            // 강조 텍스트 애니메이션
+            const strongs = paragraph.querySelectorAll('strong');
+            strongs.forEach(strong => {
+              const firstWord = strong.querySelector('.word');
+              if (firstWord) {
+                const firstWordIndex = Array.from(words).indexOf(firstWord);
+                if (firstWordIndex !== -1) {
+                  setTimeout(() => {
+                    strong.classList.add('visible');
+                  }, firstWordIndex * 100);
+                }
+              }
+            });
+
+            observer.unobserve(paragraph);
+          }
+        });
+      }, observerOptions);
+
+      // 단어별로 span 감싸기
+      function wrapWordsInSpans(element) {
+        const walker = document.createTreeWalker(
+          element,
+          NodeFilter.SHOW_TEXT,
+          null,
+          false
+        );
+
+        const textNodes = [];
+        let node;
+        while (node = walker.nextNode()) {
+          if (node.textContent.trim().length > 0) {
+            textNodes.push(node);
+          }
+        }
+
+        textNodes.forEach(textNode => {
+          const words = textNode.textContent.split(/\s+/).filter(word => word.length > 0);
+          if (words.length > 0) {
+            const fragment = document.createDocumentFragment();
+            words.forEach((word, index) => {
+              const span = document.createElement('span');
+              span.className = 'word';
+              span.textContent = word;
+              fragment.appendChild(span);
+              
+              if (index < words.length - 1) {
+                fragment.appendChild(document.createTextNode(' '));
+              }
+            });
+            textNode.parentNode.replaceChild(fragment, textNode);
+          }
+        });
+      }
+
+      document.querySelectorAll('p').forEach(paragraph => {
+        wrapWordsInSpans(paragraph);
+        textObserver.observe(paragraph);
+      });
+    }
+
+    async function loadContent(currentFile) {
+      if (!currentFile) {
+        document.querySelector('.content-wrapper').innerHTML = '<h1>Error: No file specified.</h1>';
+        return;
+      }
+
+      try {
+        const mdResponse = await fetch(`/storage/${currentFile}`);
+        if (!mdResponse.ok) throw new Error('Could not fetch markdown file.');
+        const markdownContent = await mdResponse.text();
+
+        const renderResponse = await fetch('/api/render', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ markdown: markdownContent })
+        });
+        if (!renderResponse.ok) throw new Error('Failed to render markdown.');
+        const rendered = await renderResponse.json();
+
+        document.querySelector('.content-wrapper').innerHTML = rendered.contentHtml;
+        document.querySelector('#toc-nav').innerHTML = rendered.tocHtml;
+
+        // 새로 로드된 콘텐츠에 애니메이션 적용
+        initAnimations();
+      } catch (error) {
+        console.error('Failed to load content:', error);
+        document.querySelector('.content-wrapper').innerHTML = `<h2>Error loading content.</h2><p>${error.message}</p>`;
+      }
+    }
+
+    function initWebFeatures() {
+      const currentFile = new URLSearchParams(window.location.search).get('file');
+
+      // 동적으로 콘텐츠 로드
+      loadContent(currentFile);
+
+      // TOC 토글
+      const tocToggle = document.getElementById('toc-toggle');
+      if (tocToggle) {
+        tocToggle.addEventListener('click', () => {
+          document.body.classList.toggle('toc-open');
+        });
+      }
+
+      // TOC 네비게이션
+      const tocNav = document.getElementById('toc-nav');
+      if (tocNav) {
+        tocNav.addEventListener('click', (e) => {
+          if (e.target.tagName === 'A' && e.target.getAttribute('href').startsWith('#')) {
+            e.preventDefault();
+            const targetId = e.target.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+              targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              targetElement.classList.add('flash-highlight');
+              setTimeout(() => {
+                targetElement.classList.remove('flash-highlight');
+              }, 1000);
+              document.body.classList.remove('toc-open');
+            }
+          }
+        });
+      }
+
+      // 에디터 기능
+      const editorToggle = document.getElementById('editor-toggle');
+      const saveButton = document.getElementById('save-button');
+      const editor = document.getElementById('editor');
+      let editorInitialized = false;
+
+      if (editorToggle) {
+        editorToggle.addEventListener('click', async () => {
+          document.body.classList.toggle('editor-mode');
+          editorToggle.classList.toggle('active');
+          
+          if (document.body.classList.contains('editor-mode') && !editorInitialized) {
+            try {
+              const response = await fetch(`/storage/${currentFile}`);
+              const content = await response.text();
+              editor.value = content;
+              editorInitialized = true;
+            } catch (error) {
+              console.error('Error loading file:', error);
+              editor.value = 'Error loading file content.';
+            }
+          }
+        });
+      }
+
+      if (saveButton) {
+        saveButton.addEventListener('click', async () => {
+          if (!currentFile) {
+            alert('No file specified.');
+            return;
+          }
+
+          const content = editor.value;
+          saveButton.textContent = 'Saving...';
+          
+          try {
+            const response = await fetch('/save-md', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ content, file: currentFile })
+            });
+
+            if (!response.ok) {
+              throw new Error('Save failed');
+            }
+          } catch (error) {
+            console.error('Error saving:', error);
+            alert('Failed to save file.');
+          } finally {
+            saveButton.textContent = 'Save';
+          }
+        });
+      }
+
+      // Export 기능
+      const exportTrigger = document.getElementById('export-trigger');
+      const exportOptions = document.getElementById('export-options');
+      const exportHtmlBtn = document.getElementById('export-html-btn');
+      const exportPdfBtn = document.getElementById('export-pdf-btn');
+
+      if (exportTrigger) {
+        exportTrigger.addEventListener('click', (e) => {
+          e.stopPropagation();
+          exportOptions.style.display = exportOptions.style.display === 'block' ? 'none' : 'block';
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!exportTrigger.contains(e.target)) {
+            exportOptions.style.display = 'none';
+          }
+        });
+      }
+
+      const getMarkdownForExport = async () => {
+        if (document.body.classList.contains('editor-mode') && editorInitialized) {
+          return editor.value;
+        }
+        const response = await fetch(`/storage/${currentFile}`);
+        return await response.text();
+      };
+
+      if (exportHtmlBtn) {
+        exportHtmlBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          exportOptions.style.display = 'none';
+          try {
+            const markdown = await getMarkdownForExport();
+            const response = await fetch('/export-html', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ markdown, file: currentFile })
+            });
+            
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = currentFile.replace('.md', '.html');
+            a.click();
+            URL.revokeObjectURL(url);
+          } catch (error) {
+            console.error('Export failed:', error);
+            alert('HTML export failed.');
+          }
+        });
+      }
+
+      if (exportPdfBtn) {
+        exportPdfBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          exportOptions.style.display = 'none';
+          try {
+            const markdown = await getMarkdownForExport();
+            const response = await fetch('/export-pdf', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ markdown })
+            });
+            
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = currentFile.replace('.md', '.pdf');
+            a.click();
+            URL.revokeObjectURL(url);
+          } catch (error) {
+            console.error('Export failed:', error);
+            alert('PDF export failed.');
+          }
+        });
+      }
+
+      // 라이브 리로드
+      if (window.location.protocol !== 'https:') {
+        try {
+          const ws = new WebSocket(`ws://${window.location.host}`);
+          ws.onmessage = (event) => {
+            if (event.data === 'reload') {
+              window.location.reload();
+            }
+          };
+        } catch (error) {
+          console.log('WebSocket connection failed (this is normal for exported files)');
+        }
+      }
+    }
+
+    function initLaserPointer() {
+      const canvas = document.createElement('canvas');
+      canvas.id = 'laser-canvas';
+      document.body.appendChild(canvas);
+      const ctx = canvas.getContext('2d');
+
+      const resizeCanvas = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      };
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+
+      const laserToggle = document.getElementById('laser-toggle');
+      let isLaserMode = false;
+      let isDrawing = false;
+      let lastPoint = null;
+      const segments = [];
+
+      const toggleLaser = () => {
+        isLaserMode = !isLaserMode;
+        document.body.classList.toggle('laser-mode-on', isLaserMode);
+        if (laserToggle) {
+          laserToggle.classList.toggle('active', isLaserMode);
+        }
+      };
+
+      if (laserToggle) {
+        laserToggle.addEventListener('click', toggleLaser);
+      }
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key.toLowerCase() === 'l') {
+          toggleLaser();
+        }
+      });
+
+      document.addEventListener('mousedown', (e) => {
+        if (!isLaserMode) return;
+        e.preventDefault();
+        isDrawing = true;
+        lastPoint = { x: e.clientX, y: e.clientY };
+      });
+
+      document.addEventListener('mouseup', () => {
+        isDrawing = false;
+        lastPoint = null;
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isLaserMode || !isDrawing) return;
+        
+        const currentPoint = { x: e.clientX, y: e.clientY };
+        segments.push({
+          start: lastPoint,
+          end: currentPoint,
+          createdAt: Date.now()
+        });
+        lastPoint = currentPoint;
+      });
+
+      function animate() {
+        const now = Date.now();
+        
+        // 오래된 세그먼트 제거
+        while (segments.length > 0 && now - segments[0].createdAt > 1000) {
+          segments.shift();
+        }
+
+        // 캔버스 지우기
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // 레이저 트레일 그리기
+        ctx.lineCap = 'round';
+        ctx.lineWidth = 3;
+        
+        segments.forEach(segment => {
+          const age = now - segment.createdAt;
+          const opacity = Math.max(0, 1 - (age / 1000));
+          
+          ctx.beginPath();
+          ctx.moveTo(segment.start.x, segment.start.y);
+          ctx.lineTo(segment.end.x, segment.end.y);
+          ctx.strokeStyle = `rgba(255, 50, 50, ${opacity})`;
+          ctx.stroke();
+        });
+
+        requestAnimationFrame(animate);
+      }
+      
+      animate();
+    }
+  </script>
+</body>
+</html> 
