@@ -1,6 +1,6 @@
 {
   "name": "@kangthink/present",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Transform Markdown into beautiful animated presentations with CLI and web editor support",
   "main": "present.js",
   "bin": {
