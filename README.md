@@ -30,7 +30,15 @@
 
 ## 🚀 설치
 
-### npm으로 전역 설치 (권장)
+### npx로 즉시 사용 (설치 불필요, 권장)
+```bash
+# 설치 없이 바로 사용
+npx @kangthink/present --help
+npx @kangthink/present --md presentation.md --pdf
+npx @kangthink/present --web
+```
+
+### npm으로 전역 설치
 ```bash
 npm install -g @kangthink/present
 ```
@@ -46,24 +54,38 @@ npm install
 
 ### CLI 모드
 
-#### HTML 생성
+#### npx 사용 (설치 불필요)
 ```bash
+# HTML 생성
+npx @kangthink/present --md presentation.md --output slides.html
+
+# PDF 생성 (HTML 파일 없이 PDF만)
+npx @kangthink/present --md presentation.md --pdf --output slides.pdf
+
+# 커스텀 템플릿 사용
+npx @kangthink/present --md presentation.md --template custom.html --output slides.html
+```
+
+#### 전역 설치 후 사용
+```bash
+# HTML 생성
 present --md presentation.md --output slides.html
-```
 
-#### PDF 생성 (HTML 파일 없이 PDF만)
-```bash
+# PDF 생성 (HTML 파일 없이 PDF만)
 present --md presentation.md --pdf --output slides.pdf
-```
 
-#### 커스텀 템플릿 사용
-```bash
+# 커스텀 템플릿 사용
 present --md presentation.md --template custom.html --output slides.html
 ```
 
 ### 웹 서버 모드
 
-#### 대시보드 실행
+#### npx로 대시보드 실행
+```bash
+npx @kangthink/present --web
+```
+
+#### 전역 설치 후 실행
 ```bash
 present --web
 ```
@@ -72,6 +94,10 @@ present --web
 
 #### 다른 포트 사용
 ```bash
+# npx 사용
+npx @kangthink/present --web --port 3000
+
+# 전역 설치 후
 present --web --port 3000
 ```
 
@@ -80,10 +106,31 @@ present --web --port 3000
 #### 스토리지 디렉토리 변경
 ```bash
 export PRESENT_STORAGE_DIR=/path/to/presentations
+npx @kangthink/present --web
+# 또는
 present --web
 ```
 
 기본값: `~/.preset`
+
+### 업데이트
+
+#### npx 사용 시 (항상 최신 버전)
+```bash
+npx @kangthink/present@latest --help
+```
+
+#### 전역 설치된 패키지 업데이트
+```bash
+npm update -g @kangthink/present
+```
+
+#### 현재 버전 확인
+```bash
+npx @kangthink/present --version
+# 또는
+present --version
+```
 
 ## 🎯 CLI 옵션
 
@@ -146,6 +193,8 @@ present --web
 npm run dev
 # 또는
 node present.js --web
+# 또는 npx로 테스트
+npx @kangthink/present --web
 ```
 
 ### 테스트
