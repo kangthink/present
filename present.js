@@ -15,8 +15,11 @@ const os = require('os');
 
 const PRESET_DIR = process.env.PRESENT_STORAGE_DIR || path.join(os.homedir(), '.preset');
 
+// package.json에서 버전 읽기
+const packageJson = require('./package.json');
+
 program
-  .version('1.0.0')
+  .version(packageJson.version)
   .description('A markdown presentation tool with web and CLI modes.')
   .option('--md <path>', 'Path to the input markdown file (CLI mode)')
   .option('--template <path>', 'Path to the HTML template file (CLI mode)', 'template.html')
