@@ -28,6 +28,7 @@
 
     /* Export mode: 웹 전용 버튼들만 숨기기 (TOC와 레이저 포인터는 유지) */
     .export-mode #editor-toggle,
+    .export-mode #lock-toggle,
     .export-mode #home-button,
     .export-mode #export-button,
     .export-mode #editor-wrapper {
@@ -38,6 +39,7 @@
     .pdf-export-mode #toc-toggle,
     .pdf-export-mode #laser-toggle,
     .pdf-export-mode #editor-toggle,
+    .pdf-export-mode #lock-toggle,
     .pdf-export-mode #home-button,
     .pdf-export-mode #export-button,
     .pdf-export-mode #editor-wrapper,
@@ -166,6 +168,31 @@
       background-color: #e6f7ff;
       border-color: #91d5ff;
     }
+    #lock-toggle {
+      position: fixed;
+      top: 20px;
+      right: 120px;
+      z-index: 1001;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+    }
+    #lock-toggle.locked {
+      background-color: #fff4e6;
+      border-color: #ffad33;
+    }
+    #lock-toggle.unlocked {
+      background-color: #f0f9ff;
+      border-color: #91d5ff;
+    }
     #home-button {
       position: fixed;
       top: 20px;
@@ -238,6 +265,13 @@
     body.editor-mode #preview-container {
       margin-left: 40vw;
     }
+    
+    #editor-container {
+      position: relative;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
     #editor-header {
       padding: 10px 15px;
       background: #f0f0f0;
@@ -250,6 +284,38 @@
       font-weight: bold;
       color: #333;
     }
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #help-button {
+      background: #f0f0f0;
+      border: 1px solid #ddd;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      color: #666;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    #help-button:hover {
+      background: #e0e0e0;
+      color: #333;
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
     #save-button {
       padding: 5px 12px;
       font-size: 13px;
@@ -264,6 +330,233 @@
     #save-button:hover {
       background-color: #218838;
     }
+
+    #ai-toggle-button {
+      padding: 5px 12px;
+      font-size: 13px;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    #ai-toggle-button.ai-enabled {
+      background-color: #2196F3;
+      color: white;
+      border: 1px solid #2196F3;
+    }
+
+    #ai-toggle-button.ai-enabled:hover {
+      background-color: #1976D2;
+      border-color: #1976D2;
+    }
+
+    #ai-toggle-button.ai-disabled {
+      background-color: #f8f9fa;
+      color: #6c757d;
+      border: 1px solid #dee2e6;
+    }
+
+    #ai-toggle-button.ai-disabled:hover {
+      background-color: #e9ecef;
+    }
+
+    /* 모달 스타일 */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 20px;
+      border: none;
+      border-radius: 8px;
+      width: 500px;
+      max-width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: #000;
+    }
+
+    .form-group {
+      margin: 15px 0;
+      position: relative;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .form-group input[type="password"],
+    .form-group input[type="text"] {
+      width: 100%;
+      padding: 8px 40px 8px 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      background: white;
+      box-sizing: border-box;
+    }
+
+    .form-group select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      background: white;
+      box-sizing: border-box;
+    }
+
+    .show-password {
+      position: absolute;
+      right: 8px;
+      top: 75%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px;
+      color: #666;
+      z-index: 1;
+    }
+
+    .show-password:hover {
+      color: #333;
+    }
+
+    .modal-buttons {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .modal-buttons button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    #save-api-key {
+      background-color: #2196F3;
+      color: white;
+    }
+
+    #save-api-key:hover {
+      background-color: #1976D2;
+    }
+
+    #cancel-api-key {
+      background-color: #f0f0f0;
+      color: #333;
+    }
+
+    #cancel-api-key:hover {
+      background-color: #e0e0e0;
+    }
+
+    .api-key-help {
+      margin-top: 15px;
+      color: #666;
+      line-height: 1.4;
+    }
+
+    .api-key-help a {
+      color: #2196F3;
+      text-decoration: none;
+    }
+
+    .api-key-help a:hover {
+      text-decoration: underline;
+    }
+
+    /* 도움말 모달 스타일 */
+    .help-section {
+      margin: 20px 0;
+    }
+
+    .help-section h3 {
+      margin: 15px 0 10px 0;
+      color: #333;
+      font-size: 16px;
+    }
+
+    .help-section ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .help-section li {
+      margin: 8px 0;
+      line-height: 1.4;
+    }
+
+    kbd {
+      background-color: #f1f3f4;
+      border: 1px solid #dadce0;
+      border-radius: 3px;
+      box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+      color: #202124;
+      display: inline-block;
+      font-family: monospace;
+      font-size: 11px;
+      line-height: 16px;
+      margin: 0 2px;
+      padding: 0 4px;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    #close-help {
+      background-color: #2196F3;
+      color: white;
+    }
+
+    #close-help:hover {
+      background-color: #1976D2;
+    }
+
+    /* 로딩 애니메이션 */
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-8px);
+      }
+      60% {
+        transform: translateY(-4px);
+      }
+    }
+
     #editor {
       flex-grow: 1;
       border: none;
@@ -273,9 +566,67 @@
       line-height: 1.5;
       resize: none;
       background-color: #fdfdfd;
+      position: relative;
+      z-index: 2;
     }
     #editor:focus {
       outline: none;
+    }
+    
+    #ghost-text {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      font-family: monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #888;
+      pointer-events: none;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      z-index: 1;
+      opacity: 0.7;
+      background-color: transparent;
+      width: calc(100% - 30px);
+      height: calc(100% - 30px);
+      overflow: hidden;
+      padding: 0;
+      margin: 0;
+      border: none;
+    }
+    
+    #ai-suggestion-panel {
+      position: absolute;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      z-index: 1003;
+      max-width: 300px;
+      display: none;
+    }
+    
+    .suggestion-item {
+      padding: 8px 12px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      font-size: 13px;
+    }
+    
+    .suggestion-item:last-child {
+      border-bottom: none;
+    }
+    
+    .suggestion-item:hover,
+    .suggestion-item.selected {
+      background-color: #e6f7ff;
+    }
+    
+    .suggestion-loading {
+      padding: 12px;
+      text-align: center;
+      color: #666;
+      font-style: italic;
     }
 
     #toc-nav ul {
@@ -392,7 +743,7 @@
     #export-button {
       position: fixed;
       top: 20px;
-      right: 120px;
+      right: 170px;
       z-index: 1001;
     }
 
@@ -424,15 +775,296 @@
     #export-options a:hover {
       background-color: #f0f0f0;
     }
+
+    /* Table styles */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 20px 0;
+      font-size: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    thead th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: #333;
+      position: sticky;
+      top: 0;
+    }
+
+    tbody tr {
+      transition: background-color 0.15s ease;
+    }
+
+    tbody tr:hover {
+      background-color: #f8f9fa;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Striped rows */
+    tbody tr:nth-child(even) {
+      background-color: #fafbfc;
+    }
+
+    tbody tr:nth-child(even):hover {
+      background-color: #f1f3f4;
+    }
+
+    /* Center align for specific columns if needed */
+    td.center, th.center {
+      text-align: center;
+    }
+
+    td.right, th.right {
+      text-align: right;
+    }
+
+    /* Responsive table */
+    @media (max-width: 768px) {
+      table {
+        font-size: 12px;
+      }
+      
+      th, td {
+        padding: 8px 10px;
+      }
+    }
+
+    /* PDF export specific table styles */
+    .pdf-export-mode table {
+      box-shadow: none;
+      border: 1px solid #ddd;
+    }
+
+    .pdf-export-mode tbody tr:hover {
+      background-color: transparent;
+    }
   </style>
 </head>
 <body>
   <div id="editor-wrapper">
     <div id="editor-header">
-      <span>Markdown Editor</span>
-      <button id="save-button">Save</button>
+      <div class="header-title">
+        <span>AI 글쓰기 에디터</span>
+        <button id="help-button" title="단축키 도움말">?</button>
+      </div>
+      <div class="header-buttons">
+        <button id="ai-toggle-button" class="ai-disabled">AI 비활성화</button>
+        <button id="save-button">Save</button>
+      </div>
     </div>
-    <textarea id="editor"></textarea>
+    <div id="editor-container">
+      <div id="ghost-text"></div>
+      <textarea id="editor"></textarea>
+      <div id="ai-suggestion-panel">
+        <div class="suggestion-loading">AI 추천을 생성중...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- API 키 입력 모달 -->
+  <div id="api-key-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>AI 설정</h2>
+      <p>AI 추천 기능을 사용하려면 API 키와 모델을 설정해주세요.</p>
+      
+      <div class="form-group">
+        <label for="ai-provider-select">AI 제공자:</label>
+        <select id="ai-provider-select">
+          <option value="openai">OpenAI</option>
+          <option value="anthropic">Anthropic (Claude)</option>
+          <option value="google">Google (Gemini)</option>
+          <option value="openai-compatible">OpenAI 호환 API</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="ai-model-select">AI 모델:</label>
+        <select id="ai-model-select">
+          <option value="gpt-4o-mini">GPT-4o Mini (추천)</option>
+          <option value="gpt-4o">GPT-4o</option>
+          <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+          <option value="gpt-4-turbo">GPT-4 Turbo</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="custom-model-group" style="display: none;">
+        <label for="custom-model-input">직접 입력한 모델명:</label>
+        <input type="text" id="custom-model-input" placeholder="예: gpt-4-turbo-preview, claude-3-opus-20240229">
+        <small style="color: #666; font-size: 12px; display: block; margin-top: 4px;">
+          실제 API에서 사용하는 정확한 모델명을 입력하세요
+        </small>
+      </div>
+
+      <div class="form-group" id="custom-endpoint-group" style="display: none;">
+        <label for="custom-endpoint-input">API 엔드포인트:</label>
+        <input type="text" id="custom-endpoint-input" placeholder="https://api.example.com/v1">
+      </div>
+      
+      <div class="form-group">
+        <label for="api-key-input">API 키:</label>
+        <input type="password" id="api-key-input" placeholder="API 키를 입력하세요">
+        <button type="button" id="show-api-key" class="show-password">👁</button>
+      </div>
+      
+      <details style="margin: 20px 0;">
+        <summary style="cursor: pointer; font-weight: bold; padding: 8px 0;">📝 프롬프트 커스터마이징 (선택사항)</summary>
+        <div style="margin-top: 15px;">
+          <div class="form-group">
+            <label for="continue-prompt">계속 작성 프롬프트:</label>
+            <textarea id="continue-prompt" rows="8" style="width: 100%; max-width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-family: 'Courier New', monospace; resize: vertical; min-height: 120px; box-sizing: border-box;"></textarea>
+            <button type="button" id="reset-continue-prompt" style="margin-top: 5px; padding: 4px 8px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 3px; cursor: pointer; font-size: 12px;">기본값으로 초기화</button>
+          </div>
+          
+          <div class="form-group">
+            <label for="improve-prompt">개선 모드 프롬프트:</label>
+            <textarea id="improve-prompt" rows="8" style="width: 100%; max-width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-family: 'Courier New', monospace; resize: vertical; min-height: 120px; box-sizing: border-box;"></textarea>
+            <button type="button" id="reset-improve-prompt" style="margin-top: 5px; padding: 4px 8px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 3px; cursor: pointer; font-size: 12px;">기본값으로 초기화</button>
+          </div>
+          
+          <div style="margin-top: 10px; font-size: 12px; color: #666;">
+            <p><strong>사용 가능한 변수:</strong></p>
+            <ul style="margin: 5px 0; padding-left: 20px;">
+              <li><code>{text}</code> - 전체 문서 내용</li>
+              <li><code>{beforeCursor}</code> - 커서 앞의 내용</li>
+              <li><code>{afterCursor}</code> - 커서 뒤의 내용</li>
+              <li><code>{selectedText}</code> - 선택된 텍스트 (개선 모드에서만)</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+      
+      <div class="modal-buttons">
+        <button id="save-api-key">저장</button>
+        <button id="cancel-api-key">취소</button>
+      </div>
+      
+      <div class="api-key-help">
+        <div id="help-text-openai">
+          <small>
+            API 키는 브라우저에만 저장되며 서버로 전송되지 않습니다.<br>
+            <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI에서 API 키 발급받기</a>
+          </small>
+        </div>
+        <div id="help-text-anthropic" style="display: none;">
+          <small>
+            API 키는 브라우저에만 저장되며 서버로 전송되지 않습니다.<br>
+            <a href="https://console.anthropic.com/" target="_blank">Anthropic에서 API 키 발급받기</a>
+          </small>
+        </div>
+        <div id="help-text-google" style="display: none;">
+          <small>
+            API 키는 브라우저에만 저장되며 서버로 전송되지 않습니다.<br>
+            <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio에서 API 키 발급받기</a>
+          </small>
+        </div>
+        <div id="help-text-openai-compatible" style="display: none;">
+          <small>
+            OpenAI 호환 API를 사용합니다. 엔드포인트와 API 키를 설정하세요.<br>
+            (예: Ollama, LocalAI, vLLM 등)
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 도움말 모달 -->
+  <div id="help-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>단축키 도움말</h2>
+      <div class="help-section">
+        <h3>🤖 AI 추천 기능</h3>
+        <ul>
+          <li><kbd>⌘</kbd> + <kbd>⌃</kbd> + <kbd>→</kbd> : AI 추천 요청</li>
+          <li><kbd>↑</kbd> / <kbd>↓</kbd> : 추천 항목 탐색</li>
+          <li><kbd>Tab</kbd> : 선택된 추천 적용</li>
+          <li><kbd>Esc</kbd> : 추천 패널 닫기</li>
+        </ul>
+      </div>
+      <div class="help-section">
+        <h3>✏️ 편집 기능</h3>
+        <ul>
+          <li><kbd>⌘</kbd> + <kbd>Z</kbd> : 실행 취소 (Undo)</li>
+          <li><kbd>⌘</kbd> + <kbd>⇧</kbd> + <kbd>Z</kbd> : 다시 실행 (Redo)</li>
+          <li><kbd>Tab</kbd> : 4칸 들여쓰기 (AI 추천이 없을 때)</li>
+        </ul>
+      </div>
+      <div class="help-section">
+        <h3>💡 AI 추천 모드</h3>
+        <ul>
+          <li><strong>계속 작성 모드:</strong> 커서 위치에서 추천 요청</li>
+          <li><strong>개선 모드:</strong> 텍스트 선택 후 추천 요청</li>
+        </ul>
+      </div>
+      <div class="modal-buttons">
+        <button id="close-help">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 파일 잠금 설정 모달 -->
+  <div id="file-lock-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>파일 잠금 설정</h2>
+      <p>이 파일을 비밀번호로 보호하시겠습니까?</p>
+      
+      <div class="form-group">
+        <label for="lock-password-input">비밀번호:</label>
+        <input type="password" id="lock-password-input" placeholder="비밀번호를 입력하세요 (최소 4자)">
+        <button type="button" id="show-lock-password" class="show-password">👁</button>
+      </div>
+      
+      <div class="form-group">
+        <label for="lock-password-confirm">비밀번호 확인:</label>
+        <input type="password" id="lock-password-confirm" placeholder="비밀번호를 다시 입력하세요">
+        <button type="button" id="show-lock-password-confirm" class="show-password">👁</button>
+      </div>
+      
+      <div class="modal-buttons">
+        <button id="set-lock-password">파일 잠금</button>
+        <button id="remove-file-lock" style="display: none; background-color: #ff6b6b;">잠금 해제</button>
+        <button id="cancel-lock-settings">취소</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 파일 비밀번호 입력 모달 -->
+  <div id="file-unlock-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>🔒 잠긴 파일</h2>
+      <p>이 파일은 비밀번호로 보호되어 있습니다.</p>
+      
+      <div class="form-group">
+        <label for="unlock-password-input">비밀번호:</label>
+        <input type="password" id="unlock-password-input" placeholder="비밀번호를 입력하세요">
+        <button type="button" id="show-unlock-password" class="show-password">👁</button>
+      </div>
+      
+      <div id="unlock-error" style="color: #ff6b6b; font-size: 14px; margin-top: 8px; display: none;">
+        비밀번호가 일치하지 않습니다.
+      </div>
+      
+      <div class="modal-buttons">
+        <button id="unlock-file">파일 열기</button>
+        <button id="cancel-unlock">취소</button>
+      </div>
+    </div>
   </div>
 
   <div id="preview-container">
@@ -450,10 +1082,14 @@
       <div id="export-options">
         <a href="#" id="export-html-btn">Export as HTML</a>
         <a href="#" id="export-pdf-btn">Export as PDF</a>
+        <a href="#" id="export-markdown-btn">Export as Markdown</a>
       </div>
     </div>
     <button id="editor-toggle" title="Toggle Editor">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+    </button>
+    <button id="lock-toggle" title="File Lock Settings">
+      <svg id="lock-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><circle cx="12" cy="16" r="1"></circle><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
     </button>
     
     <nav id="toc-nav">
@@ -554,6 +1190,11 @@
             strong.classList.add('visible');
           });
         });
+
+        // 리스트와 제목 내부의 strong 요소들도 즉시 표시
+        document.querySelectorAll('li strong, h1 strong, h2 strong, h3 strong, h4 strong, h5 strong, h6 strong').forEach(strong => {
+          strong.classList.add('visible');
+        });
         return; // 애니메이션 로직 건너뛰기
       }
 
@@ -615,6 +1256,11 @@
         wrapWordsInSpans(paragraph);
         textObserver.observe(paragraph);
       });
+
+      // 리스트와 제목 내부의 strong 요소들에도 즉시 visible 클래스 추가
+      document.querySelectorAll('li strong, h1 strong, h2 strong, h3 strong, h4 strong, h5 strong, h6 strong').forEach(strong => {
+        strong.classList.add('visible');
+      });
     }
 
     function initTocFeatures() {
@@ -647,6 +1293,67 @@
       }
     }
 
+    // 세션 ID는 서버에서 쿠키로 관리됨
+    // 클라이언트에서는 x-session-id 헤더로 전달받은 값 사용
+    let sessionId = null;
+
+    // 비밀번호 입력 UI 생성
+    function createPasswordUI(filename) {
+      return `
+        <div style="
+          max-width: 500px; 
+          margin: 100px auto; 
+          padding: 40px; 
+          background: white; 
+          border-radius: 12px; 
+          box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+          text-align: center;
+        ">
+          <div style="font-size: 48px; margin-bottom: 20px;">🔒</div>
+          <h2 style="color: #333; margin-bottom: 10px;">파일이 잠겨있습니다</h2>
+          <p style="color: #666; margin-bottom: 30px;">
+            <strong>${filename}</strong> 파일을 보려면 비밀번호를 입력해주세요.
+          </p>
+          <div style="margin-bottom: 20px;">
+            <input type="password" id="temp-password-input" placeholder="비밀번호 입력" 
+              style="
+                width: 100%; 
+                padding: 12px; 
+                border: 2px solid #ddd; 
+                border-radius: 6px; 
+                font-size: 16px; 
+                box-sizing: border-box;
+              " />
+          </div>
+          <div style="display: flex; gap: 10px; justify-content: center;">
+            <button id="temp-unlock-btn" style="
+              padding: 12px 24px; 
+              background: #0366d6; 
+              color: white; 
+              border: none; 
+              border-radius: 6px; 
+              cursor: pointer; 
+              font-size: 16px;
+            ">보기</button>
+            <button id="temp-cancel-btn" style="
+              padding: 12px 24px; 
+              background: #6c757d; 
+              color: white; 
+              border: none; 
+              border-radius: 6px; 
+              cursor: pointer; 
+              font-size: 16px;
+            ">취소</button>
+          </div>
+          <div id="temp-error" style="
+            color: #dc3545; 
+            margin-top: 15px; 
+            display: none;
+          "></div>
+        </div>
+      `;
+    }
+
     async function loadContent(currentFile) {
       if (!currentFile) {
         document.querySelector('.content-wrapper').innerHTML = '<h1>Error: No file specified.</h1>';
@@ -654,20 +1361,106 @@
       }
 
       try {
-        const mdResponse = await fetch(`/storage/${currentFile}`);
-        if (!mdResponse.ok) throw new Error('Could not fetch markdown file.');
-        const markdownContent = await mdResponse.text();
+        // 새로운 API 엔드포인트 사용 (잠금 상태 확인 포함)
+        const fileResponse = await fetch(`/api/get-file?filename=${encodeURIComponent(currentFile)}`);
+        if (!fileResponse.ok) throw new Error('Could not fetch file.');
+        const fileData = await fileResponse.json();
 
-        const renderResponse = await fetch('/api/render', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ markdown: markdownContent })
-        });
-        if (!renderResponse.ok) throw new Error('Failed to render markdown.');
-        const rendered = await renderResponse.json();
+        // 잠긴 파일이고 비밀번호가 필요한 경우
+        if (fileData.needsPassword) {
+          const passwordUI = createPasswordUI(fileData.filename);
+          document.querySelector('.content-wrapper').innerHTML = passwordUI;
+          document.querySelector('#toc-nav').innerHTML = '';
 
-        document.querySelector('.content-wrapper').innerHTML = rendered.contentHtml;
-        document.querySelector('#toc-nav').innerHTML = rendered.tocHtml;
+          // 에디터 비활성화
+          const editorToggle = document.getElementById('editor-toggle');
+          if (editorToggle) {
+            editorToggle.style.display = 'none';
+          }
+
+          // 비밀번호 입력 이벤트 리스너
+          const passwordInput = document.getElementById('temp-password-input');
+          const unlockBtn = document.getElementById('temp-unlock-btn');
+          const cancelBtn = document.getElementById('temp-cancel-btn');
+          const errorDiv = document.getElementById('temp-error');
+
+          const attemptUnlock = async () => {
+            const password = passwordInput.value.trim();
+            if (!password) {
+              errorDiv.textContent = '비밀번호를 입력해주세요.';
+              errorDiv.style.display = 'block';
+              return;
+            }
+
+            try {
+              const response = await fetch('/api/temporary-access', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  filename: currentFile,
+                  password: password
+                })
+              });
+
+              if (response.ok) {
+                // 임시 접근 권한 획득 후 파일 다시 로드
+                await loadContent(currentFile);
+              } else {
+                errorDiv.textContent = '비밀번호가 일치하지 않습니다.';
+                errorDiv.style.display = 'block';
+              }
+            } catch (error) {
+              console.error('임시 접근 오류:', error);
+              errorDiv.textContent = '오류가 발생했습니다.';
+              errorDiv.style.display = 'block';
+            }
+          };
+
+          unlockBtn.addEventListener('click', attemptUnlock);
+          passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+              attemptUnlock();
+            }
+          });
+          cancelBtn.addEventListener('click', () => {
+            window.location.href = '/';
+          });
+
+          // 입력창에 포커스
+          passwordInput.focus();
+          return;
+        }
+
+        // 잠긴 파일이 아닌 경우에만 콘텐츠 렌더링
+        if (!fileData.needsPassword && fileData.content) {
+          const markdownContent = fileData.content;
+          const isLocked = fileData.isLocked;
+
+          const renderResponse = await fetch('/api/render', {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ markdown: markdownContent })
+          });
+          if (!renderResponse.ok) throw new Error('Failed to render markdown.');
+          const rendered = await renderResponse.json();
+
+          document.querySelector('.content-wrapper').innerHTML = rendered.contentHtml;
+          document.querySelector('#toc-nav').innerHTML = rendered.tocHtml;
+        }
+
+        // 잠긴 파일의 경우 에디터 비활성화
+        const editorToggle = document.getElementById('editor-toggle');
+        if (editorToggle) {
+          if (fileData.needsPassword || fileData.isLocked) {
+            editorToggle.style.display = 'none';
+          } else {
+            editorToggle.style.display = 'block';
+          }
+        }
 
         // 새로 로드된 콘텐츠에 애니메이션 적용
         initAnimations();
@@ -686,27 +1479,1066 @@
       // 에디터 기능
       const editorToggle = document.getElementById('editor-toggle');
       const saveButton = document.getElementById('save-button');
+      const aiToggleButton = document.getElementById('ai-toggle-button');
+      const helpButton = document.getElementById('help-button');
       const editor = document.getElementById('editor');
+      const ghostText = document.getElementById('ghost-text');
+      const suggestionPanel = document.getElementById('ai-suggestion-panel');
       let editorInitialized = false;
+      
+      // AI 추천 관련 변수
+      let currentSuggestions = [];
+      let selectedSuggestionIndex = 0;
+      let suggestionDebounceTimer = null;
+      let isShowingSuggestion = false;
+      let suggestionMode = 'continue'; // 'continue' 또는 'improve'
+      let selectedTextForImprovement = '';
+      
+            // AI 활성화 상태 관리
+      let isAiEnabled = false;
+      let userApiKey = '';
+      let aiProvider = 'openai';
+      let aiModel = 'gpt-4o-mini';
+      let customEndpoint = '';
+      
+      // Undo/Redo 시스템
+      let undoStack = [];
+      let redoStack = [];
+      let isUndoRedo = false; // undo/redo 동작 중인지 확인
+      let undoSaveTimer = null; // 디바운스 타이머
+      const MAX_UNDO_STACK_SIZE = 100;
+      const UNDO_SAVE_DELAY = 1000; // 1초 후 undo 스택에 저장
+      
+      // 실시간 미리보기 시스템
+      let previewUpdateTimer = null;
+      const PREVIEW_UPDATE_DELAY = 500; // 500ms 후 미리보기 업데이트
+      
+      // 모달 요소들
+      const apiKeyModal = document.getElementById('api-key-modal');
+      const apiKeyInput = document.getElementById('api-key-input');
+      const aiProviderSelect = document.getElementById('ai-provider-select');
+      const aiModelSelect = document.getElementById('ai-model-select');
+      const customEndpointGroup = document.getElementById('custom-endpoint-group');
+      const customEndpointInput = document.getElementById('custom-endpoint-input');
+      const showApiKeyBtn = document.getElementById('show-api-key');
+      const saveApiKeyBtn = document.getElementById('save-api-key');
+      const cancelApiKeyBtn = document.getElementById('cancel-api-key');
+      const closeModalBtn = apiKeyModal.querySelector('.close');
+      
+      // 도움말 모달 요소들
+      const helpModal = document.getElementById('help-modal');
+      const closeHelpBtn = document.getElementById('close-help');
+      const closeHelpModalBtn = helpModal.querySelector('.close');
+        
+        // 기본 프롬프트 텍스트 (서버 코드와 동일)
+        const defaultContinuePrompt = `당신은 전문적인 글쓰기 도구입니다. 커서 위치의 구조적 맥락을 정확히 파악하고, 그에 맞는 적절한 내용을 제안해주세요.
 
-      if (editorToggle) {
-        editorToggle.addEventListener('click', async () => {
-          document.body.classList.toggle('editor-mode');
-          editorToggle.classList.toggle('active');
+<커서앞내용>
+{beforeCursor}
+</커서앞내용>
+
+<커서뒤내용>
+{afterCursor}
+</커서뒤내용>
+
+<전체문서>
+{text}
+</전체문서>
+
+위 정보를 참고하여 커서 위치에 적절한 내용을 제안해주세요. 커서 앞 내용의 구조와 맥락을 면밀히 분석하여 가장 자연스러운 후속 내용을 생성하세요.`;
+        
+        const defaultImprovePrompt = `당신은 전문적인 글쓰기 도구입니다. 선택된 텍스트의 핵심 의도와 메시지를 보존하면서 더 효과적인 표현으로 개선해주세요.
+
+<선택된텍스트>
+{selectedText}
+</선택된텍스트>
+
+<전체문서>
+{text}
+</전체문서>
+
+위 정보를 참고하여 선택된 텍스트를 개선해주세요. 원본의 의도와 포맷을 반드시 유지하면서 문법, 명확성, 표현력만 개선해주세요.`;
+        
+        // AI 상태 관리 함수들
+        function loadAiSettings() {
+          const savedApiKey = localStorage.getItem('ai-api-key');
+          const savedProvider = localStorage.getItem('ai-provider') || 'openai';
+          const savedModel = localStorage.getItem('ai-model') || 'gpt-4o-mini';
+          const savedEndpoint = localStorage.getItem('ai-endpoint') || '';
+          const savedCustomModel = localStorage.getItem('ai-custom-model') || '';
           
-          if (document.body.classList.contains('editor-mode') && !editorInitialized) {
-            try {
-              const response = await fetch(`/storage/${currentFile}`);
-              const content = await response.text();
-              editor.value = content;
-              editorInitialized = true;
-            } catch (error) {
-              console.error('Error loading file:', error);
-              editor.value = 'Error loading file content.';
+          // 프롬프트 설정 로드
+          const savedContinuePrompt = localStorage.getItem('ai-continue-prompt');
+          const savedImprovePrompt = localStorage.getItem('ai-improve-prompt');
+          
+          if (savedApiKey) {
+            userApiKey = savedApiKey;
+            aiProvider = savedProvider;
+            aiModel = savedModel;
+            customEndpoint = savedEndpoint;
+            // API 키가 있으면 자동으로 활성화
+            isAiEnabled = true;
+            console.log('저장된 AI 설정 로드됨:', { provider: aiProvider, model: aiModel, endpoint: customEndpoint, customModel: savedCustomModel });
+            
+            // UI에 설정 반영
+            aiProviderSelect.value = savedProvider;
+            updateModelOptions(savedProvider);
+            aiModelSelect.value = savedModel;
+            customEndpointInput.value = savedEndpoint;
+            document.getElementById('custom-model-input').value = savedCustomModel;
+            handleCustomModelSelection();
+            updateProviderUI();
+          } else {
+            // API 키가 없으면 비활성화
+            isAiEnabled = false;
+            console.log('저장된 API 키가 없음 - AI 비활성화');
+          }
+          
+          // 프롬프트 설정 UI에 반영
+          const continuePromptTextarea = document.getElementById('continue-prompt');
+          const improvePromptTextarea = document.getElementById('improve-prompt');
+          
+          // 저장된 프롬프트가 있으면 사용, 없으면 기본 프롬프트 사용
+          continuePromptTextarea.value = savedContinuePrompt || defaultContinuePrompt;
+          improvePromptTextarea.value = savedImprovePrompt || defaultImprovePrompt;
+          
+          updateAiToggleButton();
+        }
+        
+        function saveAiSettings() {
+          if (userApiKey) {
+            localStorage.setItem('ai-api-key', userApiKey);
+            localStorage.setItem('ai-provider', aiProvider);
+            localStorage.setItem('ai-model', aiModel);
+            localStorage.setItem('ai-endpoint', customEndpoint);
+            localStorage.setItem('ai-enabled', isAiEnabled.toString());
+          } else {
+            localStorage.removeItem('ai-api-key');
+            localStorage.removeItem('ai-provider');
+            localStorage.removeItem('ai-model');
+            localStorage.removeItem('ai-endpoint');
+            localStorage.removeItem('ai-enabled');
+          }
+        }
+        
+        function updateAiToggleButton() {
+          if (isAiEnabled && userApiKey) {
+            aiToggleButton.textContent = 'AI 활성화';
+            aiToggleButton.className = 'ai-enabled';
+          } else {
+            aiToggleButton.textContent = 'AI 비활성화';
+            aiToggleButton.className = 'ai-disabled';
+            isAiEnabled = false;
+          }
+        }
+        
+        function showApiKeyModal() {
+          // 저장된 설정을 폼에 반영
+          apiKeyInput.value = userApiKey;
+          aiProviderSelect.value = aiProvider;
+          aiModelSelect.value = aiModel;
+          customEndpointInput.value = customEndpoint;
+          
+          // 제공자에 따른 UI 업데이트
+          updateProviderUI();
+          
+          apiKeyModal.style.display = 'block';
+          apiKeyInput.focus();
+        }
+        
+        function updateProviderUI() {
+          const provider = aiProviderSelect.value;
+          
+          // 커스텀 엔드포인트 필드 표시/숨김
+          if (provider === 'openai-compatible') {
+            customEndpointGroup.style.display = 'block';
+          } else {
+            customEndpointGroup.style.display = 'none';
+          }
+          
+          // 도움말 텍스트 변경
+          document.querySelectorAll('.api-key-help > div').forEach(div => {
+            div.style.display = 'none';
+          });
+          document.getElementById(`help-text-${provider}`).style.display = 'block';
+          
+          // 모델 목록 업데이트
+          updateModelOptions(provider);
+        }
+        
+        function updateModelOptions(provider) {
+          // 기존 옵션들 제거
+          aiModelSelect.innerHTML = '';
+          
+          let models = [];
+          switch (provider) {
+            case 'openai':
+              models = [
+                { value: 'gpt-4o', text: 'GPT-4o (gpt-4o) - 최신', api: 'gpt-4o' },
+                { value: 'gpt-4o-mini', text: 'GPT-4o Mini (gpt-4o-mini) - 빠름', api: 'gpt-4o-mini' },
+                { value: 'o3-mini', text: 'o3 Mini (o3-mini) - 추론 전문', api: 'o3-mini' },
+                { value: 'custom', text: '직접 입력...', api: 'custom' }
+              ];
+              break;
+            case 'anthropic':
+              models = [
+                { value: 'claude-3-7-sonnet', text: 'Claude 3.7 Sonnet (claude-3-7-sonnet-20250219) - 최신', api: 'claude-3-7-sonnet-20250219' },
+                { value: 'claude-3-5-sonnet', text: 'Claude 3.5 Sonnet (claude-3-5-sonnet-20241022) - 인기', api: 'claude-3-5-sonnet-20241022' },
+                { value: 'claude-3-5-haiku', text: 'Claude 3.5 Haiku (claude-3-5-haiku-20241022) - 빠름', api: 'claude-3-5-haiku-20241022' },
+                { value: 'custom', text: '직접 입력...', api: 'custom' }
+              ];
+              break;
+            case 'google':
+              models = [
+                { value: 'gemini-2-5-pro', text: 'Gemini 2.5 Pro (gemini-2.5-pro) - 최신', api: 'gemini-2.5-pro' },
+                { value: 'gemini-2-5-flash', text: 'Gemini 2.5 Flash (gemini-2.5-flash) - 균형', api: 'gemini-2.5-flash' },
+                { value: 'gemini-2-0-flash', text: 'Gemini 2.0 Flash (gemini-2.0-flash) - 차세대', api: 'gemini-2.0-flash' },
+                { value: 'custom', text: '직접 입력...', api: 'custom' }
+              ];
+              break;
+            case 'openai-compatible':
+              models = [
+                { value: 'gpt-4o', text: 'GPT-4o 호환 (gpt-4o)', api: 'gpt-4o' },
+                { value: 'gpt-3.5-turbo', text: 'GPT-3.5 Turbo 호환 (gpt-3.5-turbo)', api: 'gpt-3.5-turbo' },
+                { value: 'llama-3.1-70b', text: 'Llama 3.1 70B (llama-3.1-70b-instruct)', api: 'llama-3.1-70b-instruct' },
+                { value: 'custom', text: '직접 입력...', api: 'custom' }
+              ];
+              break;
+          }
+          
+          // 새 옵션들 추가
+          models.forEach(model => {
+            const option = document.createElement('option');
+            option.value = model.value;
+            option.textContent = model.text;
+            option.dataset.api = model.api;
+            aiModelSelect.appendChild(option);
+          });
+          
+          // 저장된 모델이 목록에 있으면 선택
+          if (models.find(m => m.value === aiModel)) {
+            aiModelSelect.value = aiModel;
+          } else {
+            // 없으면 첫 번째 모델 선택
+            aiModelSelect.value = models[0].value;
+          }
+          
+          // 직접 입력 관련 처리
+          handleCustomModelSelection();
+        }
+        
+        function handleCustomModelSelection() {
+          const customModelGroup = document.getElementById('custom-model-group');
+          const customModelInput = document.getElementById('custom-model-input');
+          
+          if (aiModelSelect.value === 'custom') {
+            customModelGroup.style.display = 'block';
+            customModelInput.focus();
+          } else {
+            customModelGroup.style.display = 'none';
+          }
+        }
+        
+        function getActualModelName() {
+          const selectedOption = aiModelSelect.selectedOptions[0];
+          if (aiModelSelect.value === 'custom') {
+            const customModelInput = document.getElementById('custom-model-input');
+            const customModelName = customModelInput.value.trim() || localStorage.getItem('ai-custom-model') || 'gpt-4o-mini';
+            return customModelName;
+          }
+          return selectedOption.dataset.api || selectedOption.value;
+        }
+        
+        function hideApiKeyModal() {
+          apiKeyModal.style.display = 'none';
+          apiKeyInput.value = '';
+        }
+        
+        function showHelpModal() {
+          helpModal.style.display = 'block';
+        }
+        
+        function hideHelpModal() {
+          helpModal.style.display = 'none';
+        }
+        
+        function togglePasswordVisibility() {
+          if (apiKeyInput.type === 'password') {
+            apiKeyInput.type = 'text';
+            showApiKeyBtn.textContent = '🙈';
+          } else {
+            apiKeyInput.type = 'password';
+            showApiKeyBtn.textContent = '👁';
+          }
+        }
+        
+        // Undo/Redo 시스템 함수들
+        function saveToUndoStack() {
+          if (isUndoRedo) return; // undo/redo 동작 중에는 스택에 저장하지 않음
+          
+          const currentState = {
+            content: editor.value,
+            selectionStart: editor.selectionStart,
+            selectionEnd: editor.selectionEnd,
+            timestamp: Date.now()
+          };
+          
+          // 이전 상태와 동일하면 저장하지 않음
+          if (undoStack.length > 0) {
+            const lastState = undoStack[undoStack.length - 1];
+            if (lastState.content === currentState.content) {
+              return;
             }
           }
-        });
+          
+          undoStack.push(currentState);
+          
+          // 스택 크기 제한
+          if (undoStack.length > MAX_UNDO_STACK_SIZE) {
+            undoStack.shift();
+          }
+          
+          // 새로운 변경이 있으면 redo 스택 초기화
+          redoStack = [];
+          
+          console.log('Undo stack saved:', undoStack.length, 'states');
+        }
+        
+        function undo() {
+          if (undoStack.length === 0) return false;
+          
+          // 현재 상태를 redo 스택에 저장
+          const currentState = {
+            content: editor.value,
+            selectionStart: editor.selectionStart,
+            selectionEnd: editor.selectionEnd,
+            timestamp: Date.now()
+          };
+          redoStack.push(currentState);
+          
+          // 이전 상태로 복원
+          const prevState = undoStack.pop();
+          isUndoRedo = true;
+          
+          editor.value = prevState.content;
+          editor.selectionStart = prevState.selectionStart;
+          editor.selectionEnd = prevState.selectionEnd;
+          
+          isUndoRedo = false;
+          
+          // Undo 후 미리보기 업데이트
+          if (document.body.classList.contains('editor-mode')) {
+            schedulePreviewUpdate();
+          }
+          
+          console.log('Undo executed, remaining states:', undoStack.length);
+          return true;
+        }
+        
+        function redo() {
+          if (redoStack.length === 0) return false;
+          
+          // 현재 상태를 undo 스택에 저장
+          const currentState = {
+            content: editor.value,
+            selectionStart: editor.selectionStart,
+            selectionEnd: editor.selectionEnd,
+            timestamp: Date.now()
+          };
+          undoStack.push(currentState);
+          
+          // 다음 상태로 복원
+          const nextState = redoStack.pop();
+          isUndoRedo = true;
+          
+          editor.value = nextState.content;
+          editor.selectionStart = nextState.selectionStart;
+          editor.selectionEnd = nextState.selectionEnd;
+          
+          isUndoRedo = false;
+          
+          // Redo 후 미리보기 업데이트
+          if (document.body.classList.contains('editor-mode')) {
+            schedulePreviewUpdate();
+          }
+          
+          console.log('Redo executed, remaining redo states:', redoStack.length);
+          return true;
+        }
+        
+        function updateEditorValue(newValue, newSelectionStart = null, newSelectionEnd = null) {
+          // 변경 전 상태를 undo 스택에 저장
+          saveToUndoStack();
+          
+          // 새 값 설정
+          editor.value = newValue;
+          
+          // 커서 위치 설정
+          if (newSelectionStart !== null) {
+            editor.selectionStart = newSelectionStart;
+            editor.selectionEnd = newSelectionEnd !== null ? newSelectionEnd : newSelectionStart;
+          }
+          
+          // input 이벤트 발생시켜서 다른 리스너들이 반응하도록 함
+          editor.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        
+        // 실시간 미리보기 함수들
+        async function updatePreview() {
+          if (!editor || !editorInitialized) return;
+          
+          try {
+            const markdown = editor.value;
+            const response = await fetch('/api/render', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ markdown })
+            });
+            
+            if (!response.ok) {
+              console.error('미리보기 업데이트 실패:', response.status);
+              return;
+            }
+            
+            const rendered = await response.json();
+            
+            // 미리보기 영역 업데이트
+            const contentWrapper = document.querySelector('.content-wrapper');
+            const tocNav = document.querySelector('#toc-nav');
+            
+            if (contentWrapper) {
+              contentWrapper.innerHTML = rendered.contentHtml;
+              
+              // 애니메이션 다시 적용
+              initAnimations();
+            }
+            
+            if (tocNav) {
+              tocNav.innerHTML = rendered.tocHtml;
+            }
+            
+            console.log('실시간 미리보기 업데이트 완료');
+          } catch (error) {
+            console.error('미리보기 업데이트 중 오류:', error);
+          }
+        }
+        
+        function schedulePreviewUpdate() {
+          clearTimeout(previewUpdateTimer);
+          previewUpdateTimer = setTimeout(() => {
+            updatePreview();
+          }, PREVIEW_UPDATE_DELAY);
+        }
+        
+        // AI 추천 함수들
+      async function fetchAISuggestions(text, cursorPosition, mode = 'continue', selectedText = '') {
+        // AI가 비활성화되어 있으면 추천하지 않음
+        console.log('AI 추천 상태 확인:', { isAiEnabled, hasApiKey: !!userApiKey, provider: aiProvider, model: aiModel });
+        
+        if (!isAiEnabled || !userApiKey) {
+          console.log('AI 추천 차단됨:', { isAiEnabled, hasApiKey: !!userApiKey });
+          return null;
+        }
+        
+        try {
+          console.log('AI API 호출 시작:', { mode, selectedText, provider: aiProvider, model: aiModel });
+          const response = await fetch('/api/ai-suggest', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              text, 
+              cursorPosition, 
+              mode, 
+              selectedText,
+              apiKey: userApiKey,
+              provider: aiProvider,
+              model: getActualModelName(),
+              endpoint: customEndpoint,
+              customContinuePrompt: localStorage.getItem('ai-continue-prompt') || '',
+              customImprovePrompt: localStorage.getItem('ai-improve-prompt') || ''
+            })
+          });
+          
+          console.log('API 응답 상태:', response.status);
+          
+          const data = await response.json();
+          console.log('API 응답 데이터:', data);
+          
+          if (!response.ok) {
+            console.warn('API 오류:', data.error);
+            // 서비스 에러여도 fallback 추천이 있으면 사용
+            return data.suggestions || [];
+          }
+          
+          return data.suggestions || [];
+        } catch (error) {
+          console.error('AI suggestions 네트워크 오류:', error);
+          // 네트워크 오류 시 기본 추천 제공
+          if (mode === 'improve') {
+            return ['더 명확하게 표현', '구체적인 설명 추가', '간결하게 정리'];
+          } else {
+            return ['을 더 설명하면', '에 대한 예시는', '의 장점은'];
+          }
+        }
       }
+      
+
+      
+      function updateGhostText() {
+        // 고스트 텍스트는 더 이상 사용하지 않음 (추천 패널만 사용)
+        ghostText.style.display = 'none';
+      }
+      
+      function showSuggestionPanel() {
+        if (currentSuggestions.length === 0) return;
+        
+        suggestionPanel.innerHTML = '';
+        
+        // 모드 표시 헤더 추가
+        const header = document.createElement('div');
+        header.style.padding = '8px 12px';
+        header.style.borderBottom = '1px solid #eee';
+        header.style.fontSize = '12px';
+        header.style.color = '#666';
+        header.style.fontWeight = 'bold';
+        header.style.backgroundColor = '#f8f8f8';
+        header.textContent = suggestionMode === 'improve' 
+          ? `📝 글쓰기 개선: "${selectedTextForImprovement.substring(0, 20)}${selectedTextForImprovement.length > 20 ? '...' : ''}"` 
+          : '✏️ 글쓰기 지원';
+        suggestionPanel.appendChild(header);
+        
+        currentSuggestions.forEach((suggestion, index) => {
+          const item = document.createElement('div');
+          item.className = 'suggestion-item';
+          if (index === selectedSuggestionIndex) {
+            item.classList.add('selected');
+          }
+          item.textContent = suggestion;
+          item.addEventListener('click', () => applySuggestion(index));
+          suggestionPanel.appendChild(item);
+        });
+        
+        // 패널을 에디터 하단 중앙에 표시
+        suggestionPanel.style.display = 'block';
+        suggestionPanel.style.left = '50%';
+        suggestionPanel.style.bottom = '20px';
+        suggestionPanel.style.transform = 'translateX(-50%)';
+        suggestionPanel.style.maxWidth = '450px';
+        suggestionPanel.style.minWidth = '350px';
+      }
+      
+      function hideSuggestionPanel() {
+        suggestionPanel.style.display = 'none';
+        isShowingSuggestion = false;
+        ghostText.style.display = 'none';
+      }
+      
+      function showLoadingPanel() {
+        suggestionPanel.innerHTML = '';
+        
+        // 로딩 헤더
+        const header = document.createElement('div');
+        header.style.padding = '12px';
+        header.style.textAlign = 'center';
+        header.style.fontSize = '14px';
+        header.style.color = '#666';
+        header.style.backgroundColor = '#f8f8f8';
+        header.style.borderRadius = '4px';
+        
+        // 로딩 애니메이션 아이콘
+        const icon = document.createElement('div');
+        icon.style.display = 'inline-block';
+        icon.style.marginRight = '8px';
+        icon.innerHTML = '🤖';
+        icon.style.animation = 'bounce 1s infinite';
+        
+        // 로딩 텍스트
+        const text = document.createElement('span');
+        text.textContent = 'AI가 글쓰기를 도와드리고 있습니다...';
+        
+        header.appendChild(icon);
+        header.appendChild(text);
+        suggestionPanel.appendChild(header);
+        
+        // 패널 표시
+        suggestionPanel.style.display = 'block';
+        suggestionPanel.style.left = '50%';
+        suggestionPanel.style.bottom = '20px';
+        suggestionPanel.style.transform = 'translateX(-50%)';
+        suggestionPanel.style.maxWidth = '350px';
+        suggestionPanel.style.minWidth = '300px';
+      }
+      
+      function applySuggestion(index = selectedSuggestionIndex) {
+        if (currentSuggestions.length === 0) return;
+        
+        const suggestion = currentSuggestions[index];
+        console.log('추천 적용:', { mode: suggestionMode, suggestion });
+        
+        if (suggestionMode === 'improve') {
+          // 개선 모드: 선택된 텍스트를 추천으로 대체
+          const selectionStart = editor.selectionStart;
+          const selectionEnd = editor.selectionEnd;
+          const text = editor.value;
+          
+          const textBefore = text.substring(0, selectionStart);
+          const textAfter = text.substring(selectionEnd);
+          
+          // 선택된 부분을 추천으로 대체
+          const newText = textBefore + suggestion + textAfter;
+          const newCursorPos = selectionStart + suggestion.length;
+          
+          updateEditorValue(newText, newCursorPos, newCursorPos);
+          
+          // AI 추천 적용 후 미리보기 업데이트
+          schedulePreviewUpdate();
+          
+          console.log('텍스트 대체 완료:', {
+            before: selectedTextForImprovement,
+            after: suggestion,
+            newCursorPos
+          });
+        } else {
+          // 연속 작성 모드: 커서 위치에 추천 추가
+          const cursorPos = editor.selectionStart;
+          const textBefore = editor.value.substring(0, cursorPos);
+          const textAfter = editor.value.substring(cursorPos);
+          
+          // 새로운 텍스트로 업데이트
+          const newText = textBefore + suggestion + textAfter;
+          const newCursorPos = cursorPos + suggestion.length;
+          
+          updateEditorValue(newText, newCursorPos, newCursorPos);
+          
+          // AI 추천 적용 후 미리보기 업데이트
+          schedulePreviewUpdate();
+          
+          console.log('텍스트 추가 완료:', {
+            suggestion,
+            newCursorPos
+          });
+        }
+        
+        // 추천 상태 초기화
+        hideSuggestionPanel();
+        currentSuggestions = [];
+        isShowingSuggestion = false;
+        suggestionMode = 'continue';
+        selectedTextForImprovement = '';
+        
+        // 포커스 확실히 유지
+        setTimeout(() => {
+          editor.focus();
+        }, 0);
+      }
+      
+      function selectNextSuggestion() {
+        if (currentSuggestions.length === 0) return;
+        selectedSuggestionIndex = (selectedSuggestionIndex + 1) % currentSuggestions.length;
+        showSuggestionPanel(); // 패널 업데이트만
+      }
+      
+      function selectPrevSuggestion() {
+        if (currentSuggestions.length === 0) return;
+        selectedSuggestionIndex = selectedSuggestionIndex === 0 
+          ? currentSuggestions.length - 1 
+          : selectedSuggestionIndex - 1;
+        showSuggestionPanel(); // 패널 업데이트만
+      }
+      
+      // 수동 추천 요청 함수
+      async function requestSuggestions() {
+        const text = editor.value;
+        const selectionStart = editor.selectionStart;
+        const selectionEnd = editor.selectionEnd;
+        const selectedText = text.substring(selectionStart, selectionEnd);
+        
+        // 로딩 패널 표시
+        showLoadingPanel();
+        
+        try {
+          // 선택된 텍스트가 있는지 확인
+          if (selectedText && selectedText.trim().length > 0) {
+            // 개선 모드
+            suggestionMode = 'improve';
+            selectedTextForImprovement = selectedText;
+            
+            console.log('개선 모드 AI 추천 요청:', {
+              selectedText: selectedText.trim(),
+              textLength: text.length
+            });
+            
+            const suggestions = await fetchAISuggestions(text, selectionStart, 'improve', selectedText);
+            console.log('받은 개선 추천:', suggestions);
+            
+            if (suggestions && suggestions.length > 0) {
+              currentSuggestions = suggestions;
+              selectedSuggestionIndex = 0;
+              isShowingSuggestion = true;
+              showSuggestionPanel();
+              console.log('개선 추천 패널 표시됨');
+            } else {
+              console.log('개선 추천이 비어있음');
+              hideSuggestionPanel();
+            }
+        } else {
+          // 연속 작성 모드
+          suggestionMode = 'continue';
+          selectedTextForImprovement = '';
+          
+          const cursorPos = selectionStart;
+          const textBefore = text.substring(0, cursorPos);
+          const currentLine = textBefore.split('\n').pop();
+          
+          console.log('연속 작성 모드 AI 추천 요청:', {
+            currentLineLength: currentLine.trim().length,
+            cursorPos,
+            textLength: text.length
+          });
+          
+          // 항상 AI 추천 요청 (커서 선택 없어도 동작)
+          console.log('AI 추천 요청 중...');
+          const suggestions = await fetchAISuggestions(text, cursorPos, 'continue');
+          console.log('받은 연속 추천:', suggestions);
+          
+          if (suggestions && suggestions.length > 0) {
+            currentSuggestions = suggestions;
+            selectedSuggestionIndex = 0;
+            isShowingSuggestion = true;
+            showSuggestionPanel();
+            console.log('연속 추천 패널 표시됨');
+          } else {
+            console.log('연속 추천이 비어있음');
+            hideSuggestionPanel();
+          }
+        }
+        } catch (error) {
+          console.error('AI 추천 요청 중 오류 발생:', error);
+          hideSuggestionPanel();
+          alert('AI 추천 요청 중 오류가 발생했습니다. API 키를 확인해주세요.');
+        }
+      }
+      
+      // 자동 추천은 비활성화 (텍스트 변경 시 추천 숨기기만)
+      async function handleTextChange() {
+        // 타이핑 중에는 추천 패널 숨기기
+        if (isShowingSuggestion) {
+          hideSuggestionPanel();
+          currentSuggestions = [];
+          isShowingSuggestion = false;
+        }
+        
+        // 디바운스 undo 저장 (undo/redo 동작 중이 아닐 때만)
+        if (!isUndoRedo) {
+          clearTimeout(undoSaveTimer);
+          undoSaveTimer = setTimeout(() => {
+            saveToUndoStack();
+          }, UNDO_SAVE_DELAY);
+        }
+        
+        // 실시간 미리보기 업데이트 (에디터 모드일 때만)
+        if (document.body.classList.contains('editor-mode')) {
+          schedulePreviewUpdate();
+        }
+      }
+
+              if (editorToggle) {
+          editorToggle.addEventListener('click', async () => {
+            document.body.classList.toggle('editor-mode');
+            editorToggle.classList.toggle('active');
+            
+            if (document.body.classList.contains('editor-mode') && !editorInitialized) {
+              try {
+                const response = await fetch(`/api/get-file?filename=${encodeURIComponent(currentFile)}`);
+                const data = await response.json();
+                editor.value = data.content || '';
+                editorInitialized = true;
+                
+                // 파일 로딩 완료 후 초기 상태를 undo 스택에 저장
+                undoStack = [];
+                redoStack = [];
+                saveToUndoStack();
+                
+                // 에디터 모드일 때 초기 미리보기 업데이트
+                if (document.body.classList.contains('editor-mode')) {
+                  schedulePreviewUpdate();
+                }
+                
+                // AI 추천 이벤트 리스너 초기화
+                initAIFeatures();
+              } catch (error) {
+                console.error('Error loading file:', error);
+                editor.value = 'Error loading file content.';
+              }
+            }
+          });
+        }
+        
+        function initAIFeatures() {
+          // AI 설정 로드
+          console.log('AI 기능 초기화 시작');
+          loadAiSettings();
+          console.log('AI 설정 로드 완료:', { isAiEnabled, hasApiKey: !!userApiKey, provider: aiProvider, model: aiModel });
+          
+          // 도움말 버튼 이벤트
+          helpButton.addEventListener('click', () => {
+            showHelpModal();
+          });
+          
+          // AI 토글 버튼 이벤트
+          aiToggleButton.addEventListener('click', () => {
+            if (isAiEnabled && userApiKey) {
+              // AI 비활성화
+              isAiEnabled = false;
+              updateAiToggleButton();
+              saveAiSettings();
+              hideSuggestionPanel(); // 현재 표시된 추천 숨기기
+            } else {
+              // API 키 입력 모달 표시
+              showApiKeyModal();
+            }
+          });
+          
+          // 모달 이벤트 리스너들
+          closeModalBtn.addEventListener('click', hideApiKeyModal);
+          cancelApiKeyBtn.addEventListener('click', hideApiKeyModal);
+          showApiKeyBtn.addEventListener('click', togglePasswordVisibility);
+          
+          // AI 제공자 변경 시 UI 업데이트
+          aiProviderSelect.addEventListener('change', updateProviderUI);
+          
+          // AI 모델 선택 변경 시 직접 입력 필드 표시/숨김
+          aiModelSelect.addEventListener('change', handleCustomModelSelection);
+          
+          // 도움말 모달 이벤트 리스너들
+          closeHelpBtn.addEventListener('click', hideHelpModal);
+          closeHelpModalBtn.addEventListener('click', hideHelpModal);
+          
+          // 프롬프트 초기화 버튼들
+          const resetContinuePromptBtn = document.getElementById('reset-continue-prompt');
+          const resetImprovePromptBtn = document.getElementById('reset-improve-prompt');
+          
+          resetContinuePromptBtn.addEventListener('click', () => {
+            document.getElementById('continue-prompt').value = defaultContinuePrompt;
+          });
+          
+          resetImprovePromptBtn.addEventListener('click', () => {
+            document.getElementById('improve-prompt').value = defaultImprovePrompt;
+          });
+          
+          // API 키 저장 버튼
+          saveApiKeyBtn.addEventListener('click', () => {
+            const apiKey = apiKeyInput.value.trim();
+            const provider = aiProviderSelect.value;
+            const model = aiModelSelect.value;
+            const endpoint = customEndpointInput.value.trim();
+            const customModel = document.getElementById('custom-model-input').value.trim();
+            
+            // 프롬프트 가져오기
+            const continuePrompt = document.getElementById('continue-prompt').value.trim();
+            const improvePrompt = document.getElementById('improve-prompt').value.trim();
+            
+            // API 키 유효성 검사
+            if (apiKey.length < 5) {
+              alert('유효한 API 키를 입력해주세요.');
+              return;
+            }
+            
+            // 직접 입력 모델 검사
+            if (model === 'custom' && !customModel) {
+              alert('직접 입력 모델을 선택했을 때는 모델명을 입력해주세요.');
+              document.getElementById('custom-model-input').focus();
+              return;
+            }
+            
+            // OpenAI 호환 API인 경우 엔드포인트 필수
+            if (provider === 'openai-compatible' && !endpoint) {
+              alert('OpenAI 호환 API를 사용하려면 엔드포인트를 입력해주세요.');
+              return;
+            }
+            
+            // 설정 저장
+            userApiKey = apiKey;
+            aiProvider = provider;
+            aiModel = model;
+            customEndpoint = endpoint;
+            isAiEnabled = true;
+            
+            // 커스텀 모델명도 저장
+            if (model === 'custom') {
+              localStorage.setItem('ai-custom-model', customModel);
+            }
+            
+            // 프롬프트 저장 (기본 프롬프트와 다른 경우에만 저장)
+            if (continuePrompt && continuePrompt !== defaultContinuePrompt) {
+              localStorage.setItem('ai-continue-prompt', continuePrompt);
+            } else if (continuePrompt === defaultContinuePrompt) {
+              localStorage.removeItem('ai-continue-prompt');
+            }
+            
+            if (improvePrompt && improvePrompt !== defaultImprovePrompt) {
+              localStorage.setItem('ai-improve-prompt', improvePrompt);
+            } else if (improvePrompt === defaultImprovePrompt) {
+              localStorage.removeItem('ai-improve-prompt');
+            }
+            
+            updateAiToggleButton();
+            saveAiSettings();
+            hideApiKeyModal();
+          });
+          
+          // 모달 배경 클릭 시 닫기
+          apiKeyModal.addEventListener('click', (e) => {
+            if (e.target === apiKeyModal) {
+              hideApiKeyModal();
+            }
+          });
+          
+          helpModal.addEventListener('click', (e) => {
+            if (e.target === helpModal) {
+              hideHelpModal();
+            }
+          });
+          
+          // Enter 키로 API 키 저장
+          apiKeyInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+              saveApiKeyBtn.click();
+            } else if (e.key === 'Escape') {
+              hideApiKeyModal();
+            }
+          });
+          
+          // ESC 키로 도움말 모달 닫기
+          document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && helpModal.style.display === 'block') {
+              hideHelpModal();
+            }
+          });
+          
+          // 텍스트 입력 이벤트
+          editor.addEventListener('input', handleTextChange);
+          
+          // 키보드 이벤트 (에디터에만 적용)
+          editor.addEventListener('keydown', (e) => {
+            // 에디터에 포커스가 있을 때만 처리
+            if (document.activeElement !== editor) return;
+            
+            console.log('에디터 키보드 이벤트:', e.key, 'isShowingSuggestion:', isShowingSuggestion, 'suggestions:', currentSuggestions.length);
+            
+            // Cmd+Z (Undo)
+            if (e.metaKey && e.key === 'z' && !e.shiftKey) {
+              e.preventDefault();
+              e.stopPropagation();
+              if (undo()) {
+                console.log('Undo 실행됨');
+              } else {
+                console.log('Undo할 내용이 없음');
+              }
+              return false;
+            }
+            
+            // Cmd+Shift+Z 또는 Cmd+Y (Redo)
+            if (e.metaKey && ((e.key === 'z' && e.shiftKey) || e.key === 'y')) {
+              e.preventDefault();
+              e.stopPropagation();
+              if (redo()) {
+                console.log('Redo 실행됨');
+              } else {
+                console.log('Redo할 내용이 없음');
+              }
+              return false;
+            }
+            
+            // Cmd + Ctrl + → (우측 화살표)로 추천 목록 표시
+            if (e.metaKey && e.ctrlKey && e.key === 'ArrowRight') {
+              e.preventDefault();
+              e.stopPropagation();
+              
+              // AI가 활성화되어 있을 때만 동작
+              if (!isAiEnabled || !userApiKey) {
+                console.log('AI가 비활성화되어 있음 - 추천 요청 무시');
+                alert('AI 추천 기능을 사용하려면 먼저 활성화해주세요.');
+                return false;
+              }
+              
+              console.log('수동 추천 요청 시작');
+              requestSuggestions();
+              return false;
+            }
+            
+            // Tab 키 처리 (추천이 있으면 완성, 없으면 스페이스 4개)
+            if (e.key === 'Tab') {
+              if (isShowingSuggestion && currentSuggestions.length > 0) {
+                // AI 추천 완성
+                console.log('Tab 키로 추천 완성 시도');
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                applySuggestion();
+                return false;
+              } else {
+                // 기본 Tab 동작: 스페이스 4개 삽입
+                e.preventDefault();
+                const cursorPos = editor.selectionStart;
+                const textBefore = editor.value.substring(0, cursorPos);
+                const textAfter = editor.value.substring(editor.selectionEnd);
+                
+                // 스페이스 4개 삽입
+                const newText = textBefore + '    ' + textAfter;
+                const newCursorPos = cursorPos + 4;
+                
+                updateEditorValue(newText, newCursorPos, newCursorPos);
+                
+                // Tab 스페이스 삽입 후 미리보기 업데이트
+                schedulePreviewUpdate();
+                
+                return false;
+              }
+            }
+            
+            // 추천 패널이 열려있을 때의 다른 키보드 처리
+            if (isShowingSuggestion && currentSuggestions.length > 0) {
+              // ↓ 키로 다음 추천
+              if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                e.stopPropagation();
+                selectNextSuggestion();
+                return false;
+              }
+              
+              // ↑ 키로 이전 추천
+              if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                e.stopPropagation();
+                selectPrevSuggestion();
+                return false;
+              }
+              
+              // Escape로 추천 패널 닫기
+              if (e.key === 'Escape') {
+                e.preventDefault();
+                hideSuggestionPanel();
+                currentSuggestions = [];
+                isShowingSuggestion = false;
+                return false;
+              }
+            }
+          }, true); // 캡처 단계에서 이벤트 처리
+          
+          // 전역 키보드 이벤트는 제거 (에디터 이벤트로 충분)
+          
+          // 에디터 포커스 해제 시 패널 숨기기
+          editor.addEventListener('blur', () => {
+            setTimeout(() => {
+              if (!suggestionPanel.contains(document.activeElement)) {
+                hideSuggestionPanel();
+                currentSuggestions = [];
+                isShowingSuggestion = false;
+              }
+            }, 100);
+          });
+        }
 
       if (saveButton) {
         saveButton.addEventListener('click', async () => {
@@ -742,6 +2574,7 @@
       const exportOptions = document.getElementById('export-options');
       const exportHtmlBtn = document.getElementById('export-html-btn');
       const exportPdfBtn = document.getElementById('export-pdf-btn');
+      const exportMarkdownBtn = document.getElementById('export-markdown-btn');
 
       if (exportTrigger) {
         exportTrigger.addEventListener('click', (e) => {
@@ -760,8 +2593,9 @@
         if (document.body.classList.contains('editor-mode') && editorInitialized) {
           return editor.value;
         }
-        const response = await fetch(`/storage/${currentFile}`);
-        return await response.text();
+        const response = await fetch(`/api/get-file?filename=${encodeURIComponent(currentFile)}`);
+        const data = await response.json();
+        return data.content || '';
       };
 
       if (exportHtmlBtn) {
@@ -812,6 +2646,32 @@
           } catch (error) {
             console.error('Export failed:', error);
             alert('PDF export failed.');
+          }
+        });
+      }
+
+      if (exportMarkdownBtn) {
+        exportMarkdownBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          exportOptions.style.display = 'none';
+          try {
+            const markdown = await getMarkdownForExport();
+            const response = await fetch('/export-markdown', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ markdown, file: currentFile })
+            });
+            
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = currentFile || 'presentation.md';
+            a.click();
+            URL.revokeObjectURL(url);
+          } catch (error) {
+            console.error('Export failed:', error);
+            alert('Markdown export failed.');
           }
         });
       }
@@ -923,6 +2783,283 @@
       
       animate();
     }
+
+    // === 파일 잠금 기능 ===
+    const lockToggle = document.getElementById('lock-toggle');
+    const lockIcon = document.getElementById('lock-icon');
+    const fileLockModal = document.getElementById('file-lock-modal');
+    const fileUnlockModal = document.getElementById('file-unlock-modal');
+    
+    // Lock modal elements
+    const lockPasswordInput = document.getElementById('lock-password-input');
+    const lockPasswordConfirm = document.getElementById('lock-password-confirm');
+    const setLockPasswordBtn = document.getElementById('set-lock-password');
+    const removeLockBtn = document.getElementById('remove-file-lock');
+    const cancelLockBtn = document.getElementById('cancel-lock-settings');
+    const showLockPasswordBtn = document.getElementById('show-lock-password');
+    const showLockPasswordConfirmBtn = document.getElementById('show-lock-password-confirm');
+    
+    // Unlock modal elements
+    const unlockPasswordInput = document.getElementById('unlock-password-input');
+    const unlockFileBtn = document.getElementById('unlock-file');
+    const cancelUnlockBtn = document.getElementById('cancel-unlock');
+    const showUnlockPasswordBtn = document.getElementById('show-unlock-password');
+    const unlockError = document.getElementById('unlock-error');
+    
+    // Close buttons
+    const closeLockModalBtn = fileLockModal.querySelector('.close');
+    const closeUnlockModalBtn = fileUnlockModal.querySelector('.close');
+    
+    // 파일 잠금 상태 변수
+    let isCurrentFileLocked = false;
+    let currentFilePassword = null;
+    
+    // 잠금 상태 확인 및 UI 업데이트
+    function updateLockStatus() {
+      if (isCurrentFileLocked) {
+        lockToggle.classList.add('locked');
+        lockToggle.classList.remove('unlocked');
+        lockToggle.title = 'File is locked - Click to manage';
+        // 잠긴 자물쇠 아이콘으로 변경
+        lockIcon.innerHTML = '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><circle cx="12" cy="16" r="1"></circle><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>';
+      } else {
+        lockToggle.classList.add('unlocked');
+        lockToggle.classList.remove('locked');
+        lockToggle.title = 'File is unlocked - Click to set password';
+        // 열린 자물쇠 아이콘으로 변경
+        lockIcon.innerHTML = '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><circle cx="12" cy="16" r="1"></circle><path d="M7 11V7a5 5 0 0 1 5 0v1"></path>';
+      }
+    }
+    
+    // 비밀번호 표시/숨김 토글
+    function togglePasswordVisibility(input, button) {
+      if (input.type === 'password') {
+        input.type = 'text';
+        button.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        button.textContent = '👁';
+      }
+    }
+    
+    // 모달 표시/숨김 함수들
+    function showFileLockModal() {
+      if (isCurrentFileLocked) {
+        // 이미 잠긴 파일인 경우 잠금 해제 버튼 보이기
+        removeLockBtn.style.display = 'inline-block';
+        setLockPasswordBtn.textContent = '비밀번호 변경';
+      } else {
+        removeLockBtn.style.display = 'none';
+        setLockPasswordBtn.textContent = '파일 잠금';
+      }
+      fileLockModal.style.display = 'block';
+      lockPasswordInput.focus();
+    }
+    
+    function hideFileLockModal() {
+      fileLockModal.style.display = 'none';
+      lockPasswordInput.value = '';
+      lockPasswordConfirm.value = '';
+      unlockError.style.display = 'none';
+    }
+    
+    function showFileUnlockModal() {
+      fileUnlockModal.style.display = 'block';
+      unlockPasswordInput.focus();
+    }
+    
+    function hideFileUnlockModal() {
+      fileUnlockModal.style.display = 'none';
+      unlockPasswordInput.value = '';
+      unlockError.style.display = 'none';
+    }
+    
+    // 파일 잠금 설정
+    async function setFilePassword() {
+      const password = lockPasswordInput.value.trim();
+      const confirmPassword = lockPasswordConfirm.value.trim();
+      
+      if (!password || password.length < 4) {
+        alert('비밀번호는 최소 4자 이상이어야 합니다.');
+        return;
+      }
+      
+      if (password !== confirmPassword) {
+        alert('비밀번호가 일치하지 않습니다.');
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/set-file-lock', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            filename: getCurrentFilename(),
+            password: password 
+          })
+        });
+        
+        if (response.ok) {
+          isCurrentFileLocked = true;
+          currentFilePassword = password;
+          updateLockStatus();
+          hideFileLockModal();
+          alert('파일이 성공적으로 잠겼습니다.');
+        } else {
+          alert('파일 잠금 설정에 실패했습니다.');
+        }
+      } catch (error) {
+        console.error('파일 잠금 오류:', error);
+        alert('파일 잠금 설정 중 오류가 발생했습니다.');
+      }
+    }
+    
+    // 파일 잠금 해제
+    async function removeFilePassword() {
+      try {
+        const response = await fetch('/api/remove-file-lock', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: getCurrentFilename() })
+        });
+        
+        if (response.ok) {
+          isCurrentFileLocked = false;
+          currentFilePassword = null;
+          updateLockStatus();
+          hideFileLockModal();
+          alert('파일 잠금이 해제되었습니다.');
+        } else {
+          alert('파일 잠금 해제에 실패했습니다.');
+        }
+      } catch (error) {
+        console.error('파일 잠금 해제 오류:', error);
+        alert('파일 잠금 해제 중 오류가 발생했습니다.');
+      }
+    }
+    
+    // 파일 잠금 해제 (비밀번호 입력)
+    async function unlockFile() {
+      const password = unlockPasswordInput.value.trim();
+      
+      if (!password) {
+        unlockError.style.display = 'block';
+        unlockError.textContent = '비밀번호를 입력해주세요.';
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/unlock-file', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            filename: getCurrentFilename(),
+            password: password 
+          })
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            hideFileUnlockModal();
+            // 잠금 해제 후 파일 내용 다시 로드
+            const currentFile = new URLSearchParams(window.location.search).get('file');
+            if (currentFile) {
+              await loadContent(currentFile);
+            }
+            // 잠금 상태 업데이트
+            await updateLockStatus();
+          } else {
+            unlockError.style.display = 'block';
+            unlockError.textContent = '비밀번호가 일치하지 않습니다.';
+          }
+        } else {
+          unlockError.style.display = 'block';
+          unlockError.textContent = '파일 잠금 해제에 실패했습니다.';
+        }
+      } catch (error) {
+        console.error('파일 잠금 해제 오류:', error);
+        unlockError.style.display = 'block';
+        unlockError.textContent = '파일 잠금 해제 중 오류가 발생했습니다.';
+      }
+    }
+    
+    // 현재 파일명 가져오기 (URL에서 추출)
+    function getCurrentFilename() {
+      return new URLSearchParams(window.location.search).get('file') || 'index.md';
+    }
+    
+    // 이벤트 리스너 등록
+    lockToggle.addEventListener('click', () => {
+      if (isCurrentFileLocked) {
+        showFileLockModal();
+      } else {
+        showFileLockModal();
+      }
+    });
+    
+    // Lock modal events
+    setLockPasswordBtn.addEventListener('click', setFilePassword);
+    removeLockBtn.addEventListener('click', removeFilePassword);
+    cancelLockBtn.addEventListener('click', hideFileLockModal);
+    closeLockModalBtn.addEventListener('click', hideFileLockModal);
+    
+    // Unlock modal events
+    unlockFileBtn.addEventListener('click', unlockFile);
+    cancelUnlockBtn.addEventListener('click', hideFileUnlockModal);
+    closeUnlockModalBtn.addEventListener('click', hideFileUnlockModal);
+    
+    // Password visibility toggles
+    showLockPasswordBtn.addEventListener('click', () => {
+      togglePasswordVisibility(lockPasswordInput, showLockPasswordBtn);
+    });
+    showLockPasswordConfirmBtn.addEventListener('click', () => {
+      togglePasswordVisibility(lockPasswordConfirm, showLockPasswordConfirmBtn);
+    });
+    showUnlockPasswordBtn.addEventListener('click', () => {
+      togglePasswordVisibility(unlockPasswordInput, showUnlockPasswordBtn);
+    });
+    
+    // 모달 배경 클릭 시 닫기
+    fileLockModal.addEventListener('click', (e) => {
+      if (e.target === fileLockModal) {
+        hideFileLockModal();
+      }
+    });
+    fileUnlockModal.addEventListener('click', (e) => {
+      if (e.target === fileUnlockModal) {
+        hideFileUnlockModal();
+      }
+    });
+    
+    // Enter 키 이벤트
+    lockPasswordConfirm.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        setFilePassword();
+      }
+    });
+    unlockPasswordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        unlockFile();
+      }
+    });
+    
+    // 초기 잠금 상태 확인
+    async function checkFileInitialLockStatus() {
+      try {
+        const response = await fetch(`/api/check-file-lock?filename=${getCurrentFilename()}`);
+        if (response.ok) {
+          const data = await response.json();
+          isCurrentFileLocked = data.isLocked;
+          updateLockStatus();
+        }
+      } catch (error) {
+        console.error('파일 잠금 상태 확인 오류:', error);
+      }
+    }
+    
+    // 페이지 로드 시 잠금 상태 확인
+    checkFileInitialLockStatus();
   </script>
 </body>
 </html> 

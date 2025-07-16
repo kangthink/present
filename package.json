@@ -25,7 +25,8 @@
     "puppeteer",
     "live-reload",
     "toc",
-    "laser-pointer"
+    "laser-pointer",
+    "ai-suggestions"
   ],
   "author": {
     "name": "Present Team",
@@ -52,14 +53,16 @@
   "dependencies": {
     "chokidar": "^3.6.0",
     "commander": "^12.0.0",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "markdown-it": "^14.1.0",
     "markdown-it-anchor": "^8.6.7",
+    "markdown-it-multimd-table": "^4.2.3",
     "multer": "^1.4.5-lts.1",
+    "openai": "^4.47.1",
     "puppeteer": "^22.9.0",
     "slug": "^9.1.0",
     "ws": "^8.17.0"
   },
-  "devDependencies": {},
   "preferGlobal": true
 }
