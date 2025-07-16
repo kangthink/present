@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+
+# Development files
+.env
+.env.local
+.env.*.local
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test coverage
+coverage/
+
+# Build artifacts
+dist/
+build/
+
+# Local storage directory
+.preset/
+
+# Example files
+output.html
+output.pdf
+*.md
+!README.md
+
+# Git files
+.git/
+.gitignore
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Package manager lock files
+package-lock.json
+yarn.lock 

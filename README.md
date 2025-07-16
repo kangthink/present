@@ -1,73 +1,191 @@
 # Present
 
-마크다운 파일을 애니메이션이 적용된 아름다운 HTML 또는 PDF 문서로 변환하는 CLI 도구입니다. 실시간 미리보기와 웹 에디터 기능을 지원하여 프레젠테이션 자료를 손쉽게 제작할 수 있습니다.
+![npm version](https://img.shields.io/npm/v/@present/markdown-presentation.svg)
+![license](https://img.shields.io/npm/l/@present/markdown-presentation.svg)
 
-## Features
+마크다운 파일을 아름다운 애니메이션 프레젠테이션으로 변환하는 강력한 도구입니다. CLI와 웹 기반 편집기를 모두 지원하여 프레젠테이션 제작을 위한 완전한 솔루션을 제공합니다.
 
--   **마크다운 변환**: 마크다운을 동적인 HTML 또는 PDF 문서로 변환합니다.
--   **다양한 애니메이션**: 스크롤에 따라 제목, 본문, 하이라이트 효과가 순차적으로 나타납니다.
--   **PDF 출력**: 웹페이지와 동일한 스타일의 PDF 파일을 생성할 수 있습니다.
--   **라이브-리로딩 서버**: `--watch` 모드를 통해 파일 변경 시 브라우저가 자동 새로고침됩니다.
--   **웹 에디터**: `--editor` 모드를 통해 브라우저에서 직접 마크다운을 편집하고 저장할 수 있습니다.
--   **인터랙티브 기능**:
-    -   클릭으로 열고 닫는 목차 (Table of Contents)
-    -   `L`키 또는 아이콘으로 켜고 끄는 레이저 포인터
+## ✨ 주요 기능
 
-## 설치
+### 🎬 애니메이션 효과
+- **제목 슬라이드**: 스크롤 시 제목이 아래에서 위로 부드럽게 나타남
+- **단어별 텍스트 애니메이션**: 텍스트가 단어 단위로 순차적으로 나타남
+- **하이라이트 효과**: 강조 텍스트(`**bold**`)에 노란색 형광펜 애니메이션
+- **TOC 네비게이션**: 클릭 시 부드러운 스크롤 및 플래시 하이라이트
 
-먼저 프로젝트 저장소를 클론하고, 필요한 의존성을 설치합니다.
+### 📱 인터랙티브 기능
+- **목차(TOC)**: 좌측 사이드바, 토글 가능
+- **레이저 포인터**: 'L' 키 또는 버튼으로 활성화, 마우스 트레일 효과
+- **실시간 편집**: 웹 기반 마크다운 에디터
+- **라이브 리로드**: 파일 변경 시 자동 새로고침
 
+### 📄 내보내기 옵션
+- **HTML**: 인터랙티브 웹 프레젠테이션
+- **PDF**: 인쇄용 정적 문서 (애니메이션 비활성화)
+- **다운로드**: 웹에서 직접 HTML/PDF 내보내기
+
+### 🌐 두 가지 모드
+- **CLI 모드**: 단일 파일 변환용
+- **웹 서버 모드**: 다중 파일 관리 및 실시간 편집
+
+## 🚀 설치
+
+### npm으로 전역 설치 (권장)
 ```bash
+npm install -g @present/markdown-presentation
+```
+
+### 또는 로컬 설치
+```bash
+git clone https://github.com/kangthink/present.git
+cd present
 npm install
 ```
 
-`present.js` 파일에 실행 권한을 부여해야 할 수도 있습니다.
+## 📖 사용법
 
+### CLI 모드
+
+#### HTML 생성
 ```bash
-chmod +x present.js
+present --md presentation.md --output slides.html
 ```
 
-## 사용법
-
-### 1. 파일 변환 (HTML/PDF)
-
-마크다운 파일을 HTML 또는 PDF로 한 번만 변환할 때 사용합니다.
-
--   **HTML 생성**:
-    ```bash
-    ./present.js --template ./template.html --md ./source.md -o presentation.html
-    ```
--   **PDF 생성**:
-    ```bash
-    ./present.js --template ./template.html --md ./source.md --pdf -o document.pdf
-    ```
-
-### 2. 라이브 개발 서버 (`--watch`)
-
-마크다운이나 템플릿 파일을 수정하면서 실시간으로 변경사항을 확인하고 싶을 때 사용합니다.
-
+#### PDF 생성 (HTML 파일 없이 PDF만)
 ```bash
-./present.js --template ./template.html --md ./source.md --watch
+present --md presentation.md --pdf --output slides.pdf
 ```
 
-서버가 실행되면 터미널에 표시된 주소(기본: `http://localhost:8090`)를 브라우저에서 열어주세요. 이제 파일을 저장할 때마다 브라우저가 자동으로 새로고침됩니다.
-
-### 3. 웹 에디터 모드 (`--editor`)
-
-브라우저에서 직접 마크다운을 편집하고 저장하고 싶을 때 사용합니다. 이 모드는 `--watch` 기능을 포함합니다.
-
+#### 커스텀 템플릿 사용
 ```bash
-./present.js --template ./template.html --md ./source.md --editor
+present --md presentation.md --template custom.html --output slides.html
 ```
 
-서버 실행 후, 브라우저 우측 상단의 **연필 아이콘**을 클릭하여 에디터를 열 수 있습니다.
+### 웹 서버 모드
 
-## CLI 옵션
+#### 대시보드 실행
+```bash
+present --web
+```
 
--   `-t, --template <경로>`: (필수) 사용할 HTML 템플릿 파일의 경로.
--   `-m, --md <경로>`: (필수) 변환할 마크다운 파일의 경로.
--   `-o, --output <경로>`: (선택) 출력 파일의 경로 및 이름.
--   `--pdf`: (선택) HTML 대신 PDF 파일을 생성합니다. (`--watch` 모드에서는 동작하지 않음)
--   `--watch`: (선택) 파일 변경을 감지하여 자동 새로고침을 지원하는 개발 서버를 실행합니다.
--   `--editor`: (선택) `--watch` 모드에 더해, 웹 기반 에디터 기능을 활성화합니다.
--   `--port <숫자>`: (선택) 개발 서버의 포트 번호를 지정합니다. (기본: 8090) 
+브라우저에서 `http://localhost:8090`을 열면 프레젠테이션 관리 대시보드가 표시됩니다.
+
+#### 다른 포트 사용
+```bash
+present --web --port 3000
+```
+
+### 환경 변수
+
+#### 스토리지 디렉토리 변경
+```bash
+export PRESENT_STORAGE_DIR=/path/to/presentations
+present --web
+```
+
+기본값: `~/.preset`
+
+## 🎯 CLI 옵션
+
+| 옵션 | 설명 | 기본값 |
+|------|------|--------|
+| `--md <path>` | 입력 마크다운 파일 경로 | - |
+| `--template <path>` | HTML 템플릿 파일 경로 | `template.html` |
+| `--output <path>` | 출력 파일 경로 | `output.html` |
+| `--pdf` | PDF 형식으로 출력 | false |
+| `--web` | 웹 서버 모드 실행 | false |
+| `--port <number>` | 웹 서버 포트 | 8090 |
+
+## 🌟 웹 기능
+
+### 대시보드
+- 모든 프레젠테이션 파일 목록 보기
+- 새 빈 프레젠테이션 생성
+- 기존 마크다운 파일 업로드
+- 프레젠테이션 미리보기 및 편집
+
+### 프레젠테이션 뷰어
+- **홈 버튼**: 대시보드로 돌아가기
+- **TOC 토글**: 목차 사이드바 열기/닫기
+- **레이저 포인터**: 프레젠테이션용 마우스 트레일
+- **편집기**: 실시간 마크다운 편집
+- **내보내기**: HTML/PDF 다운로드
+
+### 단축키
+- `L`: 레이저 포인터 토글
+- `Escape`: 편집기 닫기
+
+## 📝 마크다운 문법
+
+기본 마크다운 문법을 모두 지원하며, 다음과 같은 특별한 효과가 적용됩니다:
+
+```markdown
+# 제목 (슬라이드 업 애니메이션)
+
+일반 텍스트는 단어별로 순차 등장합니다.
+
+**강조 텍스트는 형광펜 효과**가 적용됩니다.
+
+## 부제목도 애니메이션 적용
+
+- 리스트 항목
+- 각 항목도 애니메이션
+```
+
+## 🎨 폰트
+
+기본 폰트:
+- **제목**: BMEULJIRO (한글 전용)
+- **본문**: ChosunGs (한글 전용)
+- **영문**: 시스템 폰트 fallback
+
+## 🔧 개발
+
+### 로컬 개발 서버 실행
+```bash
+npm run dev
+# 또는
+node present.js --web
+```
+
+### 테스트
+```bash
+npm test
+```
+
+### 빌드
+```bash
+npm run build
+```
+
+## 📁 파일 구조
+
+```
+present/
+├── present.js          # 메인 실행 파일
+├── template.html       # HTML 템플릿
+├── package.json        # npm 설정
+├── README.md          # 문서
+└── .preset/           # 프레젠테이션 파일 저장소 (기본)
+```
+
+## 🤝 기여
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 라이선스
+
+MIT License - 자세한 내용은 [LICENSE](LICENSE) 파일을 참고하세요.
+
+## 📞 지원
+
+- 이슈 리포트: [GitHub Issues](https://github.com/kangthink/present/issues)
+- 기능 요청: [GitHub Discussions](https://github.com/kangthink/present/discussions)
+
+---
+
+**Present**로 아름다운 마크다운 프레젠테이션을 만들어보세요! 🎉 

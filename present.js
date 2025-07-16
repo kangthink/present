@@ -11,8 +11,9 @@ const chokidar = require('chokidar');
 const express = require('express');
 const WebSocket = require('ws');
 const multer = require('multer');
+const os = require('os');
 
-const PRESET_DIR = '.preset';
+const PRESET_DIR = process.env.PRESENT_STORAGE_DIR || path.join(os.homedir(), '.preset');
 
 program
   .version('1.0.0')

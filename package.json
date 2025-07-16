@@ -1,22 +1,54 @@
 {
-  "name": "present",
+  "name": "@present/markdown-presentation",
   "version": "1.0.0",
-  "description": "A CLI tool to convert Markdown to animated HTML presentations.",
+  "description": "Transform Markdown into beautiful animated presentations with CLI and web editor support",
   "main": "present.js",
   "bin": {
     "present": "./present.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node present.js --web",
+    "start": "node present.js --web",
+    "build": "echo \"No build step required\"",
+    "prepublishOnly": "npm test"
   },
   "keywords": [
     "markdown",
+    "presentation",
     "cli",
     "html",
-    "presentation"
+    "pdf",
+    "animation",
+    "web-editor",
+    "slideshow",
+    "puppeteer",
+    "live-reload",
+    "toc",
+    "laser-pointer"
   ],
-  "author": "",
-  "license": "ISC",
+  "author": {
+    "name": "Present Team",
+    "email": "contact@present.dev"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kangthink/present.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kangthink/present/issues"
+  },
+  "homepage": "https://github.com/kangthink/present#readme",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "files": [
+    "present.js",
+    "template.html",
+    "README.md",
+    "LICENSE"
+  ],
   "dependencies": {
     "chokidar": "^3.6.0",
     "commander": "^12.0.0",
@@ -27,5 +59,7 @@
     "puppeteer": "^22.9.0",
     "slug": "^9.1.0",
     "ws": "^8.17.0"
-  }
+  },
+  "devDependencies": {},
+  "preferGlobal": true
 } 
