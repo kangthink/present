@@ -72,30 +72,35 @@ async function runCli(options) {
   const contentHtml = md.render(markdownContent);
   const tocHtml = generateTocHtml(toc);
 
+  const bodyClass = createPdf ? 'export-mode pdf-export-mode' : 'export-mode';
   let finalHtml = templateContent
     .replace('{{TOC_HTML}}', tocHtml)
     .replace('{{CONTENT}}', contentHtml)
-    .replace('<body>', '<body class="export-mode">') // Use export styles
+    .replace('<body>', `<body class="${bodyClass}">`) // Use export styles
     .replace(
         '</body>',
         '<script>window.IS_EXPORTED=true;</script></body>'
     );
 
-  fs.writeFileSync(outputPath, finalHtml, 'utf8');
-  console.log(`Successfully generated HTML file at: ${outputPath}`);
-
   if (createPdf) {
+    // PDF 모드에서는 HTML 파일을 저장하지 않고 직접 PDF 생성
     const browser = await puppeteer.launch({ headless: "new" });
     const page = await browser.newPage();
-    await page.goto(`file://${path.resolve(outputPath)}`, { waitUntil: 'networkidle0' });
     
-    // Give animations time to finish
+    // HTML 콘텐츠를 직접 설정 (파일 저장 없이)
+    await page.setContent(finalHtml, { waitUntil: 'networkidle0' });
+    
+    // 애니메이션 완료 대기
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     const pdfOutputPath = outputPath.replace(/\.html$/, '.pdf');
-    await page.pdf({ path: pdfOutputPath, format: 'A4', printBackground: true });
+    await page.pdf({ path: pdfOutputPath, format: 'A4', printBackground: false });
     await browser.close();
     console.log(`Successfully generated PDF file at: ${pdfOutputPath}`);
+  } else {
+    // HTML 모드에서만 HTML 파일 저장
+    fs.writeFileSync(outputPath, finalHtml, 'utf8');
+    console.log(`Successfully generated HTML file at: ${outputPath}`);
   }
 }
 
@@ -218,11 +223,12 @@ function serveApp(options) {
         const htmlContent = md.render(markdown);
         const tocHtml = generateTocHtml(toc);
 
-        let finalHtml = templateContent.replace('<!-- CONTENT -->', htmlContent);
-        finalHtml = finalHtml.replace('<!-- TOC -->', tocHtml);
+        let finalHtml = templateContent
+            .replace('{{CONTENT}}', htmlContent)
+            .replace('{{TOC_HTML}}', tocHtml);
         
-        // Add a class to the body for PDF export to hide elements via CSS
-        finalHtml = finalHtml.replace('<body>', '<body class="export-mode">');
+        // Add a class to the body for PDF export to hide all interactive elements
+        finalHtml = finalHtml.replace('<body>', '<body class="export-mode pdf-export-mode">');
         // Inject a flag to prevent client-side re-rendering in Puppeteer
         finalHtml = finalHtml.replace(
             '</body>',
@@ -234,7 +240,7 @@ function serveApp(options) {
         
         await page.setContent(finalHtml, { waitUntil: 'networkidle0' });
         await new Promise(resolve => setTimeout(resolve, 1000));
-        const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
+        const pdfBuffer = await page.pdf({ format: 'A4', printBackground: false });
         await browser.close();
 
         res.setHeader('Content-Type', 'application/pdf');

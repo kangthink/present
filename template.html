@@ -26,14 +26,60 @@
       color: #333;
     }
 
-    /* Export mode: 버튼들 숨기기 */
-    .export-mode #toc-toggle,
-    .export-mode #laser-toggle,
+    /* Export mode: 웹 전용 버튼들만 숨기기 (TOC와 레이저 포인터는 유지) */
     .export-mode #editor-toggle,
     .export-mode #home-button,
     .export-mode #export-button,
     .export-mode #editor-wrapper {
       display: none !important;
+    }
+
+    /* PDF Export mode: 모든 버튼과 상호작용 요소 숨기기 + 배경 설정 */
+    .pdf-export-mode #toc-toggle,
+    .pdf-export-mode #laser-toggle,
+    .pdf-export-mode #editor-toggle,
+    .pdf-export-mode #home-button,
+    .pdf-export-mode #export-button,
+    .pdf-export-mode #editor-wrapper,
+    .pdf-export-mode #toc-nav {
+      display: none !important;
+    }
+
+    /* PDF Export mode: 배경 제거하고 흰색 배경만 사용 */
+    .pdf-export-mode body {
+      background-color: #ffffff !important;
+      padding: 0 !important;
+    }
+
+    .pdf-export-mode .content-wrapper {
+      max-width: none !important;
+      margin: 0 !important;
+      padding: 40px !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      background: #ffffff !important;
+    }
+
+    /* PDF Export mode: 모든 애니메이션 비활성화 */
+    .pdf-export-mode h1,
+    .pdf-export-mode h2,
+    .pdf-export-mode h3,
+    .pdf-export-mode h4,
+    .pdf-export-mode h5,
+    .pdf-export-mode h6 {
+      opacity: 1 !important;
+      transform: translateY(0) !important;
+      transition: none !important;
+    }
+
+    .pdf-export-mode p .word {
+      opacity: 1 !important;
+      transition: none !important;
+    }
+
+    .pdf-export-mode strong::after {
+      transform: scaleX(1) !important;
+      transition: none !important;
     }
 
     .content-wrapper {
@@ -423,25 +469,94 @@
       // Export 모드 감지 (간단하게)
       const isExported = document.body.classList.contains('export-mode') || 
                         !window.location.pathname.includes('/view');
+      const isPdfExport = window.IS_PDF_EXPORT || document.body.classList.contains('pdf-export-mode');
 
       // Export 모드라면 export-mode 클래스 추가 (CSS로 버튼들 숨김)
       if (isExported) {
         document.body.classList.add('export-mode');
       }
+      
+      // PDF export 모드라면 모든 상호작용 기능 비활성화
+      if (isPdfExport) {
+        document.body.classList.add('pdf-export-mode');
+      }
 
       // 애니메이션 초기화 (항상 실행)
       initAnimations();
 
-      // Export 모드가 아닐 때만 웹 기능들 활성화
+      // PDF export가 아닐 때만 상호작용 기능 활성화
+      if (!isPdfExport) {
+        initTocFeatures();
+        initLaserPointer();
+      }
+
+      // Export 모드가 아닐 때만 웹 전용 기능들 활성화
       if (!isExported) {
         initWebFeatures();
       }
-
-      // 레이저 포인터는 항상 활성화
-      initLaserPointer();
     });
 
+    // 단어별로 span 감싸기 (전역 함수로 이동)
+    function wrapWordsInSpans(element) {
+      const walker = document.createTreeWalker(
+        element,
+        NodeFilter.SHOW_TEXT,
+        null,
+        false
+      );
+
+      const textNodes = [];
+      let node;
+      while (node = walker.nextNode()) {
+        if (node.textContent.trim().length > 0) {
+          textNodes.push(node);
+        }
+      }
+
+      textNodes.forEach(textNode => {
+        const words = textNode.textContent.split(/\s+/).filter(word => word.length > 0);
+        if (words.length > 0) {
+          const fragment = document.createDocumentFragment();
+          words.forEach((word, index) => {
+            const span = document.createElement('span');
+            span.className = 'word';
+            span.textContent = word;
+            fragment.appendChild(span);
+            
+            if (index < words.length - 1) {
+              fragment.appendChild(document.createTextNode(' '));
+            }
+          });
+          textNode.parentNode.replaceChild(fragment, textNode);
+        }
+      });
+    }
+
     function initAnimations() {
+      // PDF 모드에서는 애니메이션을 건너뛰고 모든 요소를 즉시 표시
+      if (window.IS_PDF_EXPORT || document.body.classList.contains('pdf-export-mode')) {
+        // 모든 제목을 즉시 표시
+        document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(heading => {
+          heading.classList.add('visible');
+        });
+
+        // 모든 텍스트를 감싸고 즉시 표시
+        document.querySelectorAll('p').forEach(paragraph => {
+          wrapWordsInSpans(paragraph);
+          const words = paragraph.querySelectorAll('.word');
+          words.forEach(word => {
+            word.style.opacity = '1';
+          });
+          
+          // 강조 텍스트도 즉시 표시
+          const strongs = paragraph.querySelectorAll('strong');
+          strongs.forEach(strong => {
+            strong.classList.add('visible');
+          });
+        });
+        return; // 애니메이션 로직 건너뛰기
+      }
+
       const observerOptions = {
         root: null,
         rootMargin: '0px',
@@ -494,46 +609,42 @@
         });
       }, observerOptions);
 
-      // 단어별로 span 감싸기
-      function wrapWordsInSpans(element) {
-        const walker = document.createTreeWalker(
-          element,
-          NodeFilter.SHOW_TEXT,
-          null,
-          false
-        );
 
-        const textNodes = [];
-        let node;
-        while (node = walker.nextNode()) {
-          if (node.textContent.trim().length > 0) {
-            textNodes.push(node);
-          }
-        }
-
-        textNodes.forEach(textNode => {
-          const words = textNode.textContent.split(/\s+/).filter(word => word.length > 0);
-          if (words.length > 0) {
-            const fragment = document.createDocumentFragment();
-            words.forEach((word, index) => {
-              const span = document.createElement('span');
-              span.className = 'word';
-              span.textContent = word;
-              fragment.appendChild(span);
-              
-              if (index < words.length - 1) {
-                fragment.appendChild(document.createTextNode(' '));
-              }
-            });
-            textNode.parentNode.replaceChild(fragment, textNode);
-          }
-        });
-      }
 
       document.querySelectorAll('p').forEach(paragraph => {
         wrapWordsInSpans(paragraph);
         textObserver.observe(paragraph);
       });
+    }
+
+    function initTocFeatures() {
+      // TOC 토글
+      const tocToggle = document.getElementById('toc-toggle');
+      if (tocToggle) {
+        tocToggle.addEventListener('click', () => {
+          document.body.classList.toggle('toc-open');
+        });
+      }
+
+      // TOC 네비게이션
+      const tocNav = document.getElementById('toc-nav');
+      if (tocNav) {
+        tocNav.addEventListener('click', (e) => {
+          if (e.target.tagName === 'A' && e.target.getAttribute('href').startsWith('#')) {
+            e.preventDefault();
+            const targetId = e.target.getAttribute('href').substring(1); // # 제거
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+              targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              targetElement.classList.add('flash-highlight');
+              setTimeout(() => {
+                targetElement.classList.remove('flash-highlight');
+              }, 1000);
+              document.body.classList.remove('toc-open');
+            }
+          }
+        });
+      }
     }
 
     async function loadContent(currentFile) {
@@ -571,34 +682,6 @@
 
       // 동적으로 콘텐츠 로드
       loadContent(currentFile);
-
-      // TOC 토글
-      const tocToggle = document.getElementById('toc-toggle');
-      if (tocToggle) {
-        tocToggle.addEventListener('click', () => {
-          document.body.classList.toggle('toc-open');
-        });
-      }
-
-      // TOC 네비게이션
-      const tocNav = document.getElementById('toc-nav');
-      if (tocNav) {
-        tocNav.addEventListener('click', (e) => {
-          if (e.target.tagName === 'A' && e.target.getAttribute('href').startsWith('#')) {
-            e.preventDefault();
-            const targetId = e.target.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
-            if (targetElement) {
-              targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              targetElement.classList.add('flash-highlight');
-              setTimeout(() => {
-                targetElement.classList.remove('flash-highlight');
-              }, 1000);
-              document.body.classList.remove('toc-open');
-            }
-          }
-        });
-      }
 
       // 에디터 기능
       const editorToggle = document.getElementById('editor-toggle');
