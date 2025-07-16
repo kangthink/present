@@ -1,7 +1,7 @@
 # Present
 
-![npm version](https://img.shields.io/npm/v/@present/markdown-presentation.svg)
-![license](https://img.shields.io/npm/l/@present/markdown-presentation.svg)
+![npm version](https://img.shields.io/npm/v/@kangthink/present.svg)
+![license](https://img.shields.io/npm/l/@kangthink/present.svg)
 
 마크다운 파일을 아름다운 애니메이션 프레젠테이션으로 변환하는 강력한 도구입니다. CLI와 웹 기반 편집기를 모두 지원하여 프레젠테이션 제작을 위한 완전한 솔루션을 제공합니다.
 
@@ -32,7 +32,7 @@
 
 ### npm으로 전역 설치 (권장)
 ```bash
-npm install -g @present/markdown-presentation
+npm install -g @kangthink/present
 ```
 
 ### 또는 로컬 설치

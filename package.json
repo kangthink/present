@@ -1,13 +1,13 @@
 {
-  "name": "@present/markdown-presentation",
+  "name": "@kangthink/present",
   "version": "1.0.0",
   "description": "Transform Markdown into beautiful animated presentations with CLI and web editor support",
   "main": "present.js",
   "bin": {
-    "present": "./present.js"
+    "present": "present.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"No tests specified, skipping...\"",
     "dev": "node present.js --web",
     "start": "node present.js --web",
     "build": "echo \"No build step required\"",
@@ -34,7 +34,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kangthink/present.git"
+    "url": "git+https://github.com/kangthink/present.git"
   },
   "bugs": {
     "url": "https://github.com/kangthink/present/issues"
@@ -62,4 +62,4 @@
   },
   "devDependencies": {},
   "preferGlobal": true
-} 
+}

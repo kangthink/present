@@ -55,8 +55,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     npm publish --access public
     
     echo "✅ Successfully published!"
-    echo "📝 You can install it globally with: npm install -g @present/markdown-presentation"
-    echo "🔗 View on npm: https://www.npmjs.com/package/@present/markdown-presentation"
+    echo "📝 You can install it globally with: npm install -g @kangthink/present"
+    echo "🔗 View on npm: https://www.npmjs.com/package/@kangthink/present"
 else
     echo "❌ Publishing cancelled."
     exit 1
